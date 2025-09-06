@@ -69,6 +69,22 @@ export default function Dashboard() {
       institution: "Jharkhand University"
     });
   };
+  // Send uploaded file to verification API
+  const sendFileToVerificationAPI = async () => {
+    if (!uploadedDoc) return;
+    const formData = new FormData();
+    formData.append("file", uploadedDoc);
+    try {
+      const response = await fetch("https://hackodisha-forge-detection-api-1.onrender.com/predict", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      console.log("Verification API result:", result);
+    } catch (error) {
+      console.error("Error sending file to verification API:", error);
+    }
+  };
 
   const verifyDocument = async () => {
     if (!extractedData) return;
@@ -258,99 +274,6 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          {/* Document Upload & Processing Workflow */}
-          <Card className="border-primary/20 bg-gradient-to-br from-card to-card-glass">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Upload className="h-5 w-5" />
-                <span>Quick Document Processing</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Step 1: Upload */}
-              <div className="space-y-4">
-                <h4 className="font-medium flex items-center space-x-2">
-                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm">1</div>
-                  <span>Upload Document</span>
-                </h4>
-                <div className="flex items-center space-x-4">
-                  <input
-                    type="file"
-                    onChange={handleDocUpload}
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                  />
-                </div>
-                {uploadedDoc && (
-                  <div className="flex items-center space-x-2 text-sm text-success">
-                    <CheckCircle className="h-4 w-4" />
-                    <span>{uploadedDoc.name} uploaded successfully</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Step 2: Extract Data */}
-              <div className="space-y-4">
-                <h4 className="font-medium flex items-center space-x-2">
-                  <div className={`w-6 h-6 rounded-full ${extractedData ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'} flex items-center justify-center text-sm`}>2</div>
-                  <span>Generate Extracted Data</span>
-                </h4>
-                <Button 
-                  onClick={generateExtractedData} 
-                  disabled={!uploadedDoc}
-                  variant="outline"
-                  className="w-full"
-                >
-                  <Scan className="h-4 w-4 mr-2" />
-                  Extract Data from Document
-                </Button>
-                {extractedData && (
-                  <div className="p-4 bg-success/5 border border-success/20 rounded-lg space-y-2">
-                    <div className="flex items-center space-x-2 text-success font-medium">
-                      <CheckCircle className="h-4 w-4" />
-                      <span>Data Extracted Successfully</span>
-                    </div>
-                    <div className="text-sm space-y-1">
-                      <p><strong>Name:</strong> {extractedData.name}</p>
-                      <p><strong>Institution:</strong> {extractedData.institution}</p>
-                      <p><strong>Course:</strong> {extractedData.course}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Step 3: Verify */}
-              <div className="space-y-4">
-                <h4 className="font-medium flex items-center space-x-2">
-                  <div className={`w-6 h-6 rounded-full ${verificationResult ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'} flex items-center justify-center text-sm`}>3</div>
-                  <span>Verify Document</span>
-                </h4>
-                <Button 
-                  onClick={verifyDocument} 
-                  disabled={!extractedData}
-                  variant="hero"
-                  className="w-full"
-                >
-                  <Shield className="h-4 w-4 mr-2" />
-                  Verify Document Authenticity
-                </Button>
-                {verificationResult && (
-                  <div className="p-4 bg-success/5 border border-success/20 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2 text-success font-medium">
-                        <CheckCircle className="h-4 w-4" />
-                        <span>Document {verificationResult.status}</span>
-                      </div>
-                      <Badge variant="default">{verificationResult.confidence}% Confidence</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Verified on {verificationResult.timestamp}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
 
           {/* System Status */}
           <Card className="border-primary/20 bg-gradient-to-br from-success/5 to-primary/5">

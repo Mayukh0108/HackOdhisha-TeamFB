@@ -131,6 +131,27 @@ const PredictBBoxWidget = () => {
 };
 
 export default function Verify() {
+
+  // ...state declarations...
+
+  // Send uploaded file to verification API
+  const sendFileToVerificationAPI = async () => {
+    if (!uploadedFile) return;
+    const formData = new FormData();
+    formData.append("file", uploadedFile);
+    try {
+      const response = await fetch("https://hackodisha-forge-detection-api-1.onrender.com/predict", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      console.log("Verification API result:", result);
+    } catch (error) {
+      console.error("Error sending file to verification API:", error);
+    }
+  };
+
+
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [verificationStep, setVerificationStep] = useState(0);
   const [ocrData, setOcrData] = useState<any>(null);
@@ -332,7 +353,17 @@ export default function Verify() {
                         <XCircle className="h-4 w-4" />
                       </Button>
                     </div>
-                    
+                    {/* Send to Verification API */}
+                    <Button
+                      onClick={sendFileToVerificationAPI}
+                      disabled={!uploadedFile}
+                      variant="secondary"
+                      className="w-full"
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Send to Verification API
+                    </Button>
+                    <div className="text-xs text-muted-foreground">(Logs result to console)</div>
                     {isProcessing && verificationStep < 3 && (
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">

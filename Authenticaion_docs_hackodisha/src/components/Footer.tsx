@@ -65,7 +65,7 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.href + link.label}>
                   <Link 
                     to={link.href}
                     className="text-white/80 hover:text-white transition-colors"
@@ -82,7 +82,7 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Resources</h4>
             <ul className="space-y-3">
               {resources.map((link) => (
-                <li key={link.href}>
+                <li key={link.href + link.label}>
                   <Link 
                     to={link.href}
                     className="text-white/80 hover:text-white transition-colors inline-flex items-center"
@@ -140,7 +140,7 @@ export function Footer() {
             <div className="flex flex-wrap gap-6">
               {legal.map((link) => (
                 <Link 
-                  key={link.href}
+                  key={link.href + link.label}
                   to={link.href}
                   className="text-sm text-white/60 hover:text-white transition-colors"
                 >
