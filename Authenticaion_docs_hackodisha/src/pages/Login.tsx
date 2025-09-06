@@ -25,10 +25,17 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [role, setRole] = useState("verifier");
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [activeTab, setActiveTab] = useState("login");
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const API_BASE_URL = "https://hackodhisha-teamfb-backend.onrender.com";
 
   const calculatePasswordStrength = (pass: string) => {
     let strength = 0;
@@ -44,26 +51,85 @@ export default function Login() {
     setPasswordStrength(calculatePasswordStrength(value));
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: "Login Successful",
-        description: `Welcome back! Redirecting to ${role} dashboard...`,
+      const response = await fetch(`${API_BASE_URL}/api/users/send-otp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
       });
-      
-      // Navigate based on role
-      navigate("/dashboard");
-    } catch (error) {
+
+      const data = await response.json();
+
+      if (data.success) {
+        setOtpSent(true);
+        toast({
+          title: "OTP Sent",
+          description: "Check your email for the verification code",
+        });
+        
+        // In development, show the OTP for testing
+        if (process.env.NODE_ENV === 'development' && data.otp) {
+          toast({
+            title: "Development OTP",
+            description: `OTP: ${data.otp}`,
+          });
+        }
+      } else {
+        throw new Error(data.message || "Failed to send OTP");
+      }
+    } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Login Failed",
-        description: "Invalid credentials. Please try again.",
+        title: "Error",
+        description: error.message || "Something went wrong. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/verify-otp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "Login Successful",
+          description: `Welcome back! Redirecting to dashboard...`,
+        });
+        
+        // Store token in localStorage
+        if (data.token) {
+          localStorage.setItem("authToken", data.token);
+        }
+        
+        // Navigate to dashboard
+        navigate("/dashboard");
+      } else {
+        throw new Error(data.message || "Invalid OTP");
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Something went wrong. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -75,21 +141,46 @@ export default function Login() {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: "Registration Successful",
-        description: "Account created successfully! Please verify your email.",
+      const response = await fetch(`${API_BASE_URL}/api/users/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstname: firstName,
+          lastname: lastName,
+          email,
+          password,
+        }),
       });
-    } catch (error) {
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "Registration Successful",
+          description: "Account created successfully! You can now login.",
+        });
+        
+        // Switch to login tab
+        setActiveTab("login");
+      } else {
+        throw new Error(data.message || "Registration failed");
+      }
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Registration Failed",
-        description: "Something went wrong. Please try again.",
+        description: error.message || "Something went wrong. Please try again.",
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const resetOtpFlow = () => {
+    setOtpSent(false);
+    setOtp("");
   };
 
   return (
@@ -160,189 +251,203 @@ export default function Login() {
                   <Shield className="h-8 w-8 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl font-display">Welcome Back</CardTitle>
+              <CardTitle className="text-2xl font-display">
+                {otpSent ? "Verify Your Identity" : "Welcome Back"}
+              </CardTitle>
               <p className="text-muted-foreground">
-                Sign in to your account or create a new one
+                {otpSent 
+                  ? "Enter the OTP sent to your email" 
+                  : "Sign in to your account or create a new one"}
               </p>
             </CardHeader>
             
             <CardContent>
-              <Tabs defaultValue="login" className="space-y-4">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="login">Login</TabsTrigger>
-                  <TabsTrigger value="register">Register</TabsTrigger>
-                </TabsList>
-                
-                {/* Login Form */}
-                <TabsContent value="login">
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="Enter your email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="pl-10"
-                          required
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Enter your password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="pl-10 pr-10"
-                          required
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-2 top-1 h-8 w-8 p-0"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="role">Role</Label>
-                      <Select value={role} onValueChange={setRole}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="verifier">Verifier</SelectItem>
-                          <SelectItem value="institution">Institution Admin</SelectItem>
-                          <SelectItem value="admin">HED Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <Button type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading ? "Signing In..." : "Sign In"}
-                    </Button>
-                  </form>
-                </TabsContent>
-                
-                {/* Register Form */}
-                <TabsContent value="register">
-                  <form onSubmit={handleRegister} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+              {!otpSent ? (
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="login">Login</TabsTrigger>
+                    <TabsTrigger value="register">Register</TabsTrigger>
+                  </TabsList>
+                  
+                  {/* Login Form */}
+                  <TabsContent value="login">
+                    <form onSubmit={handleSendOtp} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" placeholder="John" required />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" placeholder="Doe" required />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="registerEmail">Email Address</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="registerEmail"
-                          type="email"
-                          placeholder="Enter your email"
-                          className="pl-10"
-                          required
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="registerPassword">Password</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="registerPassword"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Create a password"
-                          onChange={(e) => handlePasswordChange(e.target.value)}
-                          className="pl-10 pr-10"
-                          required
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-2 top-1 h-8 w-8 p-0"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
+                        <Label htmlFor="email">Email Address</Label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            id="email"
+                            type="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="pl-10"
+                            required
+                          />
+                        </div>
                       </div>
                       
-                      {/* Password Strength */}
-                      {password && (
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <span>Password Strength</span>
-                            <span className={
-                              passwordStrength >= 75 ? "text-success" :
-                              passwordStrength >= 50 ? "text-warning" :
-                              "text-destructive"
-                            }>
-                              {passwordStrength >= 75 ? "Strong" :
-                               passwordStrength >= 50 ? "Medium" :
-                               "Weak"}
-                            </span>
-                          </div>
-                          <div className="h-1 bg-muted rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full transition-all duration-300 ${
-                                passwordStrength >= 75 ? "bg-success" :
-                                passwordStrength >= 50 ? "bg-warning" :
-                                "bg-destructive"
-                              }`}
-                              style={{ width: `${passwordStrength}%` }}
-                            />
-                          </div>
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? "Sending OTP..." : "Send Verification Code"}
+                      </Button>
+                    </form>
+                  </TabsContent>
+                  
+                  {/* Register Form */}
+                  <TabsContent value="register">
+                    <form onSubmit={handleRegister} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="firstName">First Name</Label>
+                          <Input 
+                            id="firstName" 
+                            placeholder="John" 
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            required 
+                          />
                         </div>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="registerRole">Role</Label>
-                      <Select defaultValue="verifier">
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="verifier">Verifier</SelectItem>
-                          <SelectItem value="institution">Institution Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="lastName">Last Name</Label>
+                          <Input 
+                            id="lastName" 
+                            placeholder="Doe" 
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            required 
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="registerEmail">Email Address</Label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            id="registerEmail"
+                            type="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="pl-10"
+                            required
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="registerPassword">Password</Label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            id="registerPassword"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Create a password"
+                            value={password}
+                            onChange={(e) => handlePasswordChange(e.target.value)}
+                            className="pl-10 pr-10"
+                            required
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-2 top-1 h-8 w-8 p-0"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                        
+                        {/* Password Strength */}
+                        {password && (
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between text-xs">
+                              <span>Password Strength</span>
+                              <span className={
+                                passwordStrength >= 75 ? "text-success" :
+                                passwordStrength >= 50 ? "text-warning" :
+                                "text-destructive"
+                              }>
+                                {passwordStrength >= 75 ? "Strong" :
+                                 passwordStrength >= 50 ? "Medium" :
+                                 "Weak"}
+                              </span>
+                            </div>
+                            <div className="h-1 bg-muted rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full transition-all duration-300 ${
+                                  passwordStrength >= 75 ? "bg-success" :
+                                  passwordStrength >= 50 ? "bg-warning" :
+                                  "bg-destructive"
+                                }`}
+                                style={{ width: `${passwordStrength}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
 
-                    <Button type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading ? "Creating Account..." : "Create Account"}
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? "Creating Account..." : "Create Account"}
+                      </Button>
+                    </form>
+                  </TabsContent>
+                </Tabs>
+              ) : (
+                // OTP Verification Form
+                <form onSubmit={handleVerifyOtp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="otp">Verification Code</Label>
+                    <Input
+                      id="otp"
+                      type="text"
+                      placeholder="Enter 6-digit code"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      required
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Enter the 6-digit code sent to {email}
+                    </p>
+                  </div>
+                  
+                  <div className="flex space-x-2">
+                    <Button type="submit" className="flex-1" disabled={isLoading}>
+                      {isLoading ? "Verifying..." : "Verify Code"}
                     </Button>
-                  </form>
-                </TabsContent>
-              </Tabs>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={resetOtpFlow}
+                      disabled={isLoading}
+                    >
+                      Back
+                    </Button>
+                  </div>
+                  
+                  <div className="text-center text-sm">
+                    <button 
+                      type="button" 
+                      onClick={handleSendOtp}
+                      className="text-primary hover:underline"
+                      disabled={isLoading}
+                    >
+                      Resend Code
+                    </button>
+                  </div>
+                </form>
+              )}
 
               {/* Additional Links */}
-              <div className="mt-6 text-center text-sm">
-                <Link to="/help" className="text-primary hover:underline">
-                  Need help? Contact Support
-                </Link>
-              </div>
+              {!otpSent && (
+                <div className="mt-6 text-center text-sm">
+                  <Link to="/help" className="text-primary hover:underline">
+                    Need help? Contact Support
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
 
