@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000;
 // Use cookie parser first
 app.use(cookieParser());
 
-// Configure CORS properly - USE ONLY ONCE
+// Configure CORS properly
 app.use(cors({
   origin: [
     'http://localhost:8080',
@@ -27,8 +27,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// Handle preflight requests
-app.options('*', cors()); // Enable preflight for all routes
+// REMOVE THIS LINE: app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
