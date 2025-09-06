@@ -100,7 +100,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-card-glass to-primary/5">
-      <Navbar user={mockUser} />
+      <Navbar />
       
       <div className="container py-8">
         <div className="max-w-7xl mx-auto space-y-8">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,57 +15,106 @@ import {
   User
 } from "lucide-react";
 
-interface NavbarProps {
-  user?: {
-    name: string;
-    role: 'verifier' | 'institution' | 'admin';
-  } | null;
-}
-
-export function Navbar({ user }: NavbarProps) {
+export function Navbar() {
+  const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // In real app, clear auth tokens/session here
-    navigate('/login');
+  const API_BASE_URL = "https://hackodhisha-teamfb-backend.onrender.com";
+
+  useEffect(() => {
+    // Fetch user data when component mounts
+    const fetchUser = async () => {
+      try {
+        // Get token from localStorage (where your login stores it)
+        const token = localStorage.getItem("authToken");
+        
+        if (!token) {
+          setUser(null);
+          return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/users/me`, {
+          credentials: 'include',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setUser(data.data);
+          }
+        } else {
+          // If unauthorized, clear the invalid token
+          localStorage.removeItem("authToken");
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+        localStorage.removeItem("authToken");
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (token) {
+        await fetch(`${API_BASE_URL}/api/users/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear both localStorage and state
+      localStorage.removeItem("authToken");
+      setUser(null);
+      navigate('/login');
+    }
   };
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path) => location.pathname === path;
 
+  // Navigation items
   const navItems = user ? [
     { 
       href: "/dashboard", 
       label: "Dashboard", 
       icon: BarChart3,
-      roles: ['verifier', 'institution', 'admin'] 
     },
     { 
       href: "/verify", 
       label: "Verify Document", 
       icon: FileSearch,
-      roles: ['verifier', 'institution', 'admin'] 
     },
     { 
       href: "/history", 
       label: "History", 
       icon: History,
-      roles: ['verifier', 'institution', 'admin'] 
     },
     { 
       href: "/institutions", 
       label: "Institutions", 
       icon: Building2,
-      roles: ['institution', 'admin'] 
     },
     { 
       href: "/admin", 
       label: "Admin", 
       icon: Shield,
-      roles: ['admin'] 
     },
-  ].filter(item => item.roles.includes(user.role)) : [
+  ] : [
     { href: "/", label: "Home" },
     { href: "/help", label: "Help" },
   ];
@@ -108,10 +157,7 @@ export function Navbar({ user }: NavbarProps) {
             <div className="hidden md:flex items-center space-x-3">
               <div className="flex items-center space-x-2">
                 <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{user.name}</span>
-                <Badge variant="secondary" className="text-xs">
-                  {user.role}
-                </Badge>
+                <span className="text-sm font-medium">{user.name || user.email}</span>
               </div>
               <Button variant="ghost" size="sm">
                 <Settings className="h-4 w-4" />
@@ -144,10 +190,7 @@ export function Navbar({ user }: NavbarProps) {
                   <div className="flex items-center space-x-3 p-4 rounded-lg bg-muted">
                     <User className="h-8 w-8 text-muted-foreground" />
                     <div>
-                      <p className="font-medium">{user.name}</p>
-                      <Badge variant="secondary" className="text-xs">
-                        {user.role}
-                      </Badge>
+                      <p className="font-medium">{user.name || user.email}</p>
                     </div>
                   </div>
                 )}
@@ -176,7 +219,7 @@ export function Navbar({ user }: NavbarProps) {
                     </Button>
                     <Button variant="ghost" className="w-full justify-start space-x-3" onClick={handleLogout}>
                       <LogOut className="h-4 w-4" />
-<span>Logout</span>
+                      <span>Logout</span>
                     </Button>
                   </div>
                 ) : (
