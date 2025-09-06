@@ -11,32 +11,38 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Use cookie parser first
 app.use(cookieParser());
+
+// Configure CORS properly - USE ONLY ONCE
+app.use(cors({
+  origin: [
+    'http://localhost:8080',
+    'http://localhost:5173',
+    'http://localhost:3000',
+    // Add any other domains you need
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+// Handle preflight requests
+app.options('*', cors()); // Enable preflight for all routes
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(
-    cors({
-      origin: ['*'],
-      methods: ["GET", "POST", "PUT", "DELETE"],
-      credentials: true,
-    })
-  );
-
-
+// Routes
 app.use('/api/users', userRoutes);
-
-
 
 // Connect to MongoDB
 connectDb();
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
-}
-);
+  res.send('Hello World!');
+});
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
