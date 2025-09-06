@@ -81,7 +81,7 @@ export default function Dashboard() {
     try {
       const formData = new FormData();
       formData.append("file", uploadedDoc);
-      const response = await fetch("http://localhost:4000/ocr-proxy", {
+      const response = await fetch("https://hackodisha-ocr-api.onrender.com/extract/", {
         method: "POST",
         body: formData,
       });

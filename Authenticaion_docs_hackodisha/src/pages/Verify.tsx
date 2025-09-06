@@ -184,7 +184,7 @@ export default function Verify() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const response = await fetch("http://localhost:4000/ocr-proxy", {
+      const response = await fetch("https://hackodisha-ocr-api.onrender.com/extract/", {
         method: "POST",
         body: formData,
       });
