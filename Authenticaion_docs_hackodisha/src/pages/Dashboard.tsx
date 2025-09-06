@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { 
-  FileSearch, 
-  History, 
-  TrendingUp, 
-  AlertTriangle, 
+import {
+  FileSearch,
+  History,
+  TrendingUp,
+  AlertTriangle,
   CheckCircle,
   Clock,
   Users,
@@ -28,14 +28,14 @@ export default function Dashboard() {
   const [verificationResult, setVerificationResult] = useState<any>(null);
 
   const API_BASE_URL = "https://hackodhisha-teamfb-backend.onrender.com";
-  
+
   useEffect(() => {
     // Fetch user data when component mounts
     const fetchUser = async () => {
       try {
         // Get token from localStorage (where your login stores it)
         const token = localStorage.getItem("authToken");
-        
+
         if (!token) {
           setUser(null);
           return;
@@ -48,7 +48,7 @@ export default function Dashboard() {
             'Content-Type': 'application/json',
           },
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           if (data.success) {
@@ -78,19 +78,20 @@ export default function Dashboard() {
 
   const generateExtractedData = async () => {
     if (!uploadedDoc) return;
-    
-    // Simulate OCR processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setExtractedData({
-      name: "RAJESH KUMAR SINGH",
-      rollNumber: "JU20CSE045",
-      course: "Bachelor of Technology",
-      branch: "Computer Science & Engineering",
-      year: "2024",
-      marks: "8.7 CGPA",
-      certificateId: "JU-CSE-2024-045-BTech",
-      institution: "Jharkhand University"
-    });
+    try {
+      const formData = new FormData();
+      formData.append("file", uploadedDoc);
+      const response = await fetch("http://localhost:4000/ocr-proxy", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) throw new Error("OCR API error");
+      const ocrResult = await response.json();
+      setExtractedData(ocrResult);
+    } catch (error) {
+      console.error("OCR extraction failed:", error);
+      setExtractedData(null);
+    }
   };
 
   const sendFileToVerificationAPI = async () => {
@@ -111,7 +112,7 @@ export default function Dashboard() {
 
   const verifyDocument = async () => {
     if (!extractedData) return;
-    
+
     // Simulate verification process
     await new Promise(resolve => setTimeout(resolve, 3000));
     setVerificationResult({
@@ -144,7 +145,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-card-glass to-primary/5">
       <Navbar />
-      
+
       <div className="container py-8">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Welcome Header */}
@@ -254,11 +255,11 @@ export default function Dashboard() {
                       <p className="text-sm text-muted-foreground">{verification.institution}</p>
                       <p className="text-xs text-muted-foreground">{verification.timestamp}</p>
                     </div>
-                    <Badge 
+                    <Badge
                       variant={
                         verification.status === 'valid' ? 'default' :
-                        verification.status === 'review' ? 'secondary' : 
-                        'destructive'
+                          verification.status === 'review' ? 'secondary' :
+                            'destructive'
                       }
                     >
                       {verification.status === 'valid' && <CheckCircle className="h-3 w-3 mr-1" />}
