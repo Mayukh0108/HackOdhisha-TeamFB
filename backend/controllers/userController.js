@@ -3,7 +3,6 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
-import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -188,7 +187,7 @@ export const logoutUser = (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -256,7 +255,7 @@ export const getUserById = async (req, res) => {
 
 export const updateUserResults = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user.id;
     const { name, institution } = req.body;
     if (!name || !institution) {
       return res.status(400).json({ success: false, message: "Missing fields" });
@@ -274,38 +273,8 @@ export const updateUserResults = async (req, res) => {
 
 export const fetchResults = async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    const lastResults = user.lastResults || [];
-    if (!lastResults || lastResults.length === 0) {
-      return res.status(404).json({ message: "No results found" });
-    }
-    res.status(200).json({
-      success: true,
-      data: lastResults,
-    });
-  } catch (error) {
-    console.error("Error in results:", error);
-    res.status(500).json({
-      success: false,
-      message: error.message || "Internal server error",
-    });
-  }
-};
-
-// 2️⃣ Get ONE particular result by index (or id if stored inside object)
-export const fetchResultByIndex = async (req, res) => {
-  try {
-    const userId = req.userId;
-    const index = parseInt(req.params.id, 10); // e.g., /user/result/0
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, message: "Invalid user id" });
-    }
-
-    const user = await User.findById(userId).select("lastResults");
+    // user id comes from auth middleware (JWT decoded)
+    const user = await User.findById(req.user.id).select("lastResults");
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
