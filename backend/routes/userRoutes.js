@@ -21,7 +21,7 @@ router.get("/me", userAuth, getUser);
 router.get("/", userAuth, getAllUsers);
 router.get("/:id", userAuth, getUserById);
 router.post("/results", userAuth, updateUserResults);
-router.get("/results", userAuth, fetchResults);
-router.get("/results/:id", userAuth, fetchResultsbyId);
+router.get("/fetch", userAuth, fetchResults);
+router.get("/fetch/:id", userAuth, fetchResultsbyId);
 
 export default router;
