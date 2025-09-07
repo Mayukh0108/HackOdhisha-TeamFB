@@ -7,11 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Shield, 
-  Eye, 
-  EyeOff, 
-  CheckCircle, 
+import {
+  Shield,
+  Eye,
+  EyeOff,
+  CheckCircle,
   AlertCircle,
   ArrowLeft,
   Mail,
@@ -54,7 +54,7 @@ export default function Login() {
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/users/send-otp`, {
         method: "POST",
@@ -72,14 +72,7 @@ export default function Login() {
           title: "OTP Sent",
           description: "Check your email for the verification code",
         });
-        
-        // In development, show the OTP for testing
-        if (process.env.NODE_ENV === 'development' && data.otp) {
-          toast({
-            title: "Development OTP",
-            description: `OTP: ${data.otp}`,
-          });
-        }
+
       } else {
         throw new Error(data.message || "Failed to send OTP");
       }
@@ -97,7 +90,7 @@ export default function Login() {
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/users/verify-otp`, {
         method: "POST",
@@ -114,12 +107,17 @@ export default function Login() {
           title: "Login Successful",
           description: `Welcome back! Redirecting to dashboard...`,
         });
-        
+
         // Store token in localStorage
         if (data.token) {
           localStorage.setItem("authToken", data.token);
         }
-        
+
+        // Store user info in localStorage for dashboard display
+        if (data.user) {
+          localStorage.setItem("userInfo", JSON.stringify(data.user));
+        }
+
         // Navigate to dashboard
         navigate("/dashboard");
       } else {
@@ -139,7 +137,7 @@ export default function Login() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/users/register`, {
         method: "POST",
@@ -161,7 +159,7 @@ export default function Login() {
           title: "Registration Successful",
           description: "Account created successfully! You can now login.",
         });
-        
+
         // Switch to login tab
         setActiveTab("login");
       } else {
@@ -187,13 +185,13 @@ export default function Login() {
     <div className="min-h-screen flex">
       {/* Left Panel - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
-        <img 
+        <img
           src={graduationImage}
           alt="Academic Verification"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-secondary/90" />
-        
+
         {/* Overlay Content */}
         <div className="relative z-10 flex flex-col justify-center p-12 text-white">
           <div className="max-w-md">
@@ -206,15 +204,15 @@ export default function Login() {
                 <p className="text-white/80">Jharkhand Higher Education</p>
               </div>
             </div>
-            
+
             <h2 className="text-4xl font-display font-bold mb-6">
               Secure Academic Verification
             </h2>
             <p className="text-xl text-white/90 mb-8">
-              Join thousands of institutions and verifiers using the most trusted 
+              Join thousands of institutions and verifiers using the most trusted
               certificate validation platform.
             </p>
-            
+
             {/* Trust Badges */}
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
@@ -255,12 +253,12 @@ export default function Login() {
                 {otpSent ? "Verify Your Identity" : "Welcome Back"}
               </CardTitle>
               <p className="text-muted-foreground">
-                {otpSent 
-                  ? "Enter the OTP sent to your email" 
+                {otpSent
+                  ? "Enter the OTP sent to your email"
                   : "Sign in to your account or create a new one"}
               </p>
             </CardHeader>
-            
+
             <CardContent>
               {!otpSent ? (
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
@@ -268,7 +266,7 @@ export default function Login() {
                     <TabsTrigger value="login">Login</TabsTrigger>
                     <TabsTrigger value="register">Register</TabsTrigger>
                   </TabsList>
-                  
+
                   {/* Login Form */}
                   <TabsContent value="login">
                     <form onSubmit={handleSendOtp} className="space-y-4">
@@ -287,39 +285,39 @@ export default function Login() {
                           />
                         </div>
                       </div>
-                      
+
                       <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? "Sending OTP..." : "Send Verification Code"}
                       </Button>
                     </form>
                   </TabsContent>
-                  
+
                   {/* Register Form */}
                   <TabsContent value="register">
                     <form onSubmit={handleRegister} className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="firstName">First Name</Label>
-                          <Input 
-                            id="firstName" 
-                            placeholder="John" 
+                          <Input
+                            id="firstName"
+                            placeholder="John"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
-                            required 
+                            required
                           />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="lastName">Last Name</Label>
-                          <Input 
-                            id="lastName" 
-                            placeholder="Doe" 
+                          <Input
+                            id="lastName"
+                            placeholder="Doe"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
-                            required 
+                            required
                           />
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor="registerEmail">Email Address</Label>
                         <div className="relative">
@@ -335,7 +333,7 @@ export default function Login() {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor="registerPassword">Password</Label>
                         <div className="relative">
@@ -359,7 +357,7 @@ export default function Login() {
                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </Button>
                         </div>
-                        
+
                         {/* Password Strength */}
                         {password && (
                           <div className="space-y-1">
@@ -367,21 +365,20 @@ export default function Login() {
                               <span>Password Strength</span>
                               <span className={
                                 passwordStrength >= 75 ? "text-success" :
-                                passwordStrength >= 50 ? "text-warning" :
-                                "text-destructive"
+                                  passwordStrength >= 50 ? "text-warning" :
+                                    "text-destructive"
                               }>
                                 {passwordStrength >= 75 ? "Strong" :
-                                 passwordStrength >= 50 ? "Medium" :
-                                 "Weak"}
+                                  passwordStrength >= 50 ? "Medium" :
+                                    "Weak"}
                               </span>
                             </div>
                             <div className="h-1 bg-muted rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full transition-all duration-300 ${
-                                  passwordStrength >= 75 ? "bg-success" :
+                              <div
+                                className={`h-full transition-all duration-300 ${passwordStrength >= 75 ? "bg-success" :
                                   passwordStrength >= 50 ? "bg-warning" :
-                                  "bg-destructive"
-                                }`}
+                                    "bg-destructive"
+                                  }`}
                                 style={{ width: `${passwordStrength}%` }}
                               />
                             </div>
@@ -412,24 +409,24 @@ export default function Login() {
                       Enter the 6-digit code sent to {email}
                     </p>
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     <Button type="submit" className="flex-1" disabled={isLoading}>
                       {isLoading ? "Verifying..." : "Verify Code"}
                     </Button>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
+                    <Button
+                      type="button"
+                      variant="outline"
                       onClick={resetOtpFlow}
                       disabled={isLoading}
                     >
                       Back
                     </Button>
                   </div>
-                  
+
                   <div className="text-center text-sm">
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={handleSendOtp}
                       className="text-primary hover:underline"
                       disabled={isLoading}
