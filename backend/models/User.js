@@ -3,41 +3,41 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
     firstname: {
         type: String,
-        required: true, 
+        required: true,
         trim: true
     },
     lastname: {
         type: String,
-        required: true, 
+        required: true,
         trim: true
     },
     email: {
         type: String,
-        required: true, 
+        required: true,
         unique: true,
         lowercase: true,
         trim: true
     },
-    password: { 
+    password: {
         type: String,
         required: true
     },
     lastResults: [
-    {
-      name: { type: String, required: true },
-      institution: { type: String, required: true },
-      date: { type: Date, default: Date.now },
-    },
-],
+        {
+            name: { type: String, required: true },
+            institution: { type: String, required: true },
+            date: { type: Date, default: Date.now },
+        },
+    ],
     createdAt: {
         type: Date,
         default: Date.now
     },
     otp: {
-    code: String,
-    expiresAt: Date,
-    sentTo: [String] // Track where OTP was sent ('sms', 'email')
-  },
+        code: String,
+        expiresAt: Date,
+        sentTo: [String] 
+    },
 }, { timestamps: true });
 
 
