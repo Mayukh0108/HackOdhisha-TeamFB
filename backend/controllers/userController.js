@@ -103,9 +103,7 @@ export const sendLoginOTP = async (req, res) => {
       res.json({
         success: true,
         message: "OTP sent successfully",
-        otpSentTo: ['email'],
-        // Only include OTP in development for testing
-        ...(process.env.NODE_ENV === 'development' && { otp: otpCode })
+        otpSentTo: ['email']
       });
 
     } catch (emailError) {
@@ -160,8 +158,8 @@ export const verifyLoginOTP = async (req, res) => {
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, 
-      sameSite: "None", 
+      secure: true,
+      sameSite: "None",
       maxAge: 28 * 24 * 60 * 60 * 1000,
     });
 

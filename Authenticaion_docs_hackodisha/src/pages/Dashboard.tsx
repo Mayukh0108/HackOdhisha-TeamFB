@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { 
-  FileSearch, 
-  History, 
-  TrendingUp, 
-  AlertTriangle, 
+import {
+  FileSearch,
+  History,
+  TrendingUp,
+  AlertTriangle,
   CheckCircle,
   Clock,
   Users,
@@ -21,10 +21,13 @@ import {
   Scan
 } from "lucide-react";
 
-// Mock user data - in real app this would come from auth context
-const mockUser = {
-  name: "Dr. Sarah Johnson",
-  role: "verifier" as const
+// Get user info from localStorage (set during login)
+const getUserFromStorage = () => {
+  try {
+    const userStr = localStorage.getItem("userInfo");
+    if (userStr) return JSON.parse(userStr);
+  } catch { }
+  return null;
 };
 
 const recentVerifications = [
@@ -89,7 +92,7 @@ export default function Dashboard() {
 
   const verifyDocument = async () => {
     if (!extractedData) return;
-    
+
     // Simulate verification process
     await new Promise(resolve => setTimeout(resolve, 3000));
     setVerificationResult({
@@ -99,17 +102,17 @@ export default function Dashboard() {
     });
   };
 
+  const user = getUserFromStorage();
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-card-glass to-primary/5">
       <Navbar />
-      
       <div className="container py-8">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Welcome Header */}
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-display font-bold">
-                Welcome back, {mockUser.name.split(' ')[1]}
+                Welcome back, {user?.name || "User"}
               </h1>
               <p className="text-xl text-muted-foreground">
                 Here's your verification activity overview
@@ -117,7 +120,7 @@ export default function Dashboard() {
             </div>
             <Badge variant="secondary" className="px-4 py-2">
               <Shield className="h-4 w-4 mr-2" />
-              {mockUser.role.charAt(0).toUpperCase() + mockUser.role.slice(1)}
+              {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : "Verifier"}
             </Badge>
           </div>
 
@@ -210,11 +213,11 @@ export default function Dashboard() {
                       <p className="text-sm text-muted-foreground">{verification.institution}</p>
                       <p className="text-xs text-muted-foreground">{verification.timestamp}</p>
                     </div>
-                    <Badge 
+                    <Badge
                       variant={
                         verification.status === 'valid' ? 'default' :
-                        verification.status === 'review' ? 'secondary' : 
-                        'destructive'
+                          verification.status === 'review' ? 'secondary' :
+                            'destructive'
                       }
                     >
                       {verification.status === 'valid' && <CheckCircle className="h-3 w-3 mr-1" />}
