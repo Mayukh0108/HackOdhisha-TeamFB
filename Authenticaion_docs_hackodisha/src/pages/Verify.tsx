@@ -192,9 +192,6 @@ export default function Verify() {
       const ocrResult = await response.json();
       setOcrData(ocrResult);
       setVerificationStep(2);
-      
-      // Automatically proceed to verification
-      setTimeout(() => processVerification(mockOcrData), 1000);
     } catch (error) {
       toast({
         variant: "destructive",
