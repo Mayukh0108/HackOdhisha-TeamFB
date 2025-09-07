@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Verify from "./pages/Verify";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Help from "./pages/Help";
 import Privacy from "./pages/Privacy";
@@ -23,7 +24,11 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/verify" element={<Verify />} />
+          <Route path="/verify" element={
+            <ProtectedRoute>
+              <Verify />
+            </ProtectedRoute>
+          } />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/help" element={<Help />} />
           <Route path="/privacy" element={<Privacy />} />
