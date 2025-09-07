@@ -6,12 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Upload,
-  FileText,
-  Scan,
-  CheckCircle,
-  AlertTriangle,
+import { 
+  Upload, 
+  FileText, 
+  Scan, 
+  CheckCircle, 
+  AlertTriangle, 
   XCircle,
   Camera,
   QrCode,
@@ -52,29 +52,29 @@ const PredictBBoxWidget = () => {
     if (!image) return;
     setLoading(true);
     setError(null);
-
+    
     try {
       // Simulate API call to /predict endpoint
       await new Promise(resolve => setTimeout(resolve, 2000));
-
+      
       // For demo, we'll create a mock result
       const canvas = document.createElement('canvas');
       canvas.width = 800;
       canvas.height = 600;
       const ctx = canvas.getContext('2d');
-
+      
       if (ctx) {
         // Create mock bounding box visualization
         ctx.fillStyle = '#f0f9ff';
         ctx.fillRect(0, 0, 800, 600);
-
+        
         // Draw bounding boxes
         ctx.strokeStyle = '#22c55e';
         ctx.lineWidth = 3;
         ctx.strokeRect(50, 50, 200, 100); // Seal
         ctx.strokeRect(300, 200, 250, 50); // Signature
         ctx.strokeRect(100, 400, 300, 80); // Certificate ID
-
+        
         // Add labels
         ctx.fillStyle = '#22c55e';
         ctx.font = '16px Inter';
@@ -82,7 +82,7 @@ const PredictBBoxWidget = () => {
         ctx.fillText('Signature ✓', 305, 195);
         ctx.fillText('Certificate ID ✓', 105, 395);
       }
-
+      
       canvas.toBlob((blob) => {
         if (blob) {
           setResult(URL.createObjectURL(blob));
@@ -98,29 +98,29 @@ const PredictBBoxWidget = () => {
   return (
     <div className="space-y-4">
       <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4">
-        <input
-          type="file"
-          accept="image/*"
+        <input 
+          type="file" 
+          accept="image/*" 
           onChange={(e) => setImage(e.target.files?.[0] ?? null)}
           className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
         />
       </div>
-
-      <Button
-        onClick={handleUpload}
-        disabled={!image || loading}
+      
+      <Button 
+        onClick={handleUpload} 
+        disabled={!image || loading} 
         className="w-full"
       >
         {loading ? "Detecting Objects..." : "Detect Seals & Signatures"}
       </Button>
-
+      
       {error && (
         <div className="flex items-center space-x-2 text-destructive text-sm">
           <AlertTriangle className="h-4 w-4" />
           <span>{error}</span>
         </div>
       )}
-
+      
       {result && (
         <div className="rounded-xl overflow-hidden border shadow-sm">
           <img src={result} alt="Bounding Box Detection Result" className="w-full h-auto" />
@@ -181,19 +181,28 @@ export default function Verify() {
 
   const processOCR = async (file: File) => {
     setIsProcessing(true);
+    
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const response = await fetch("http://localhost:4000/ocr-proxy", {
-        method: "POST",
-        body: formData,
-      });
-      if (!response.ok) throw new Error("OCR API error");
-      const ocrResult = await response.json();
-      setOcrData(ocrResult);
+      // Simulate OCR processing
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      const mockOcrData = {
+        name: "RAJESH KUMAR SINGH",
+        rollNumber: "JU20CSE045",
+        course: "Bachelor of Technology",
+        branch: "Computer Science & Engineering",
+        year: "2024",
+        marks: "8.7 CGPA",
+        certificateId: "JU-CSE-2024-045-BTech",
+        institution: "Jharkhand University",
+        issueDate: "June 15, 2024"
+      };
+      
+      setOcrData(mockOcrData);
       setVerificationStep(2);
+      
       // Automatically proceed to verification
-      setTimeout(() => processVerification(ocrResult), 1000);
+      setTimeout(() => processVerification(mockOcrData), 1000);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -207,11 +216,11 @@ export default function Verify() {
 
   const processVerification = async (data: any) => {
     setIsProcessing(true);
-
+    
     try {
       // Simulate verification process
       await new Promise(resolve => setTimeout(resolve, 4000));
-
+      
       const mockResult: VerificationResult = {
         status: "valid",
         confidence: 97,
@@ -229,10 +238,10 @@ export default function Verify() {
           formatting: true
         }
       };
-
+      
       setVerificationResult(mockResult);
       setVerificationStep(3);
-
+      
       toast({
         title: "Verification Complete",
         description: `Document verified with ${mockResult.confidence}% confidence`
@@ -258,8 +267,8 @@ export default function Verify() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-card-glass to-accent/5">
-      <Navbar />
-
+      <Navbar/>
+      
       <div className="container py-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
@@ -276,24 +285,27 @@ export default function Verify() {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${verificationStep >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                  }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  verificationStep >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}>
                   {verificationStep >= 1 ? <CheckCircle className="h-4 w-4" /> : <Upload className="h-4 w-4" />}
                 </div>
                 <span className="font-medium">Upload</span>
               </div>
-
+              
               <div className="flex items-center space-x-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${verificationStep >= 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                  }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  verificationStep >= 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}>
                   {verificationStep >= 2 ? <CheckCircle className="h-4 w-4" /> : <Scan className="h-4 w-4" />}
                 </div>
                 <span className="font-medium">Extract</span>
               </div>
-
+              
               <div className="flex items-center space-x-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${verificationStep >= 3 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                  }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  verificationStep >= 3 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}>
                   {verificationStep >= 3 ? <CheckCircle className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
                 </div>
                 <span className="font-medium">Verify</span>
@@ -315,8 +327,9 @@ export default function Verify() {
                 {!uploadedFile ? (
                   <div
                     {...getRootProps()}
-                    className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${isDragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50'
-                      }`}
+                    className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+                      isDragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50'
+                    }`}
                   >
                     <input {...getInputProps()} />
                     <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -395,7 +408,7 @@ export default function Verify() {
                       <TabsTrigger value="fields">Key Fields</TabsTrigger>
                       <TabsTrigger value="bbox">Detection</TabsTrigger>
                     </TabsList>
-
+                    
                     <TabsContent value="fields" className="space-y-3">
                       {Object.entries(ocrData).map(([key, value]) => (
                         <div key={key} className="flex justify-between items-center p-2 bg-muted/50 rounded">
@@ -406,7 +419,7 @@ export default function Verify() {
                         </div>
                       ))}
                     </TabsContent>
-
+                    
                     <TabsContent value="bbox">
                       <PredictBBoxWidget />
                     </TabsContent>
@@ -435,11 +448,11 @@ export default function Verify() {
                   <div className="space-y-4">
                     {/* Status Badge */}
                     <div className="text-center">
-                      <Badge
+                      <Badge 
                         variant={
                           verificationResult.status === 'valid' ? 'default' :
-                            verificationResult.status === 'review' ? 'secondary' :
-                              'destructive'
+                          verificationResult.status === 'review' ? 'secondary' : 
+                          'destructive'
                         }
                         className="text-lg px-4 py-2"
                       >
