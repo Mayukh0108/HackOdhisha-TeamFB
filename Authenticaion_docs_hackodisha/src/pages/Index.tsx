@@ -6,12 +6,9 @@ import { Showcase } from "@/components/Showcase";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
-  // Mock user - in real app this would come from auth context
-  const user = null; // Set to null for public homepage
-
   return (
     <div className="min-h-screen">
-      <Navbar user={user} />
+      <Navbar />
       <Hero />
       <Features />
       <Stats />

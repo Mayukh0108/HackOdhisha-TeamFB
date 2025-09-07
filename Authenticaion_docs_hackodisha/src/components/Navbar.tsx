@@ -3,16 +3,16 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { 
-  Shield, 
-  Menu, 
-  FileSearch, 
-  History, 
-  Settings, 
+import {
+  Shield,
+  Menu,
+  FileSearch,
+  History,
+  Settings,
   Building2,
   BarChart3,
   LogOut,
-  User
+  User,
 } from "lucide-react";
 
 export function Navbar() {
@@ -29,20 +29,20 @@ export function Navbar() {
       try {
         // Get token from localStorage (where your login stores it)
         const token = localStorage.getItem("authToken");
-        
+
         if (!token) {
           setUser(null);
           return;
         }
 
         const response = await fetch(`${API_BASE_URL}/api/users/me`, {
-          credentials: 'include',
+          credentials: "include",
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           if (data.success) {
@@ -54,7 +54,7 @@ export function Navbar() {
           setUser(null);
         }
       } catch (error) {
-        console.error('Failed to fetch user:', error);
+        console.error("Failed to fetch user:", error);
         localStorage.removeItem("authToken");
         setUser(null);
       }
@@ -68,62 +68,57 @@ export function Navbar() {
       const token = localStorage.getItem("authToken");
       if (token) {
         await fetch(`${API_BASE_URL}/api/users/logout`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
       }
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
       // Clear both localStorage and state
       localStorage.removeItem("authToken");
       setUser(null);
-      navigate('/login');
+      navigate("/login");
     }
   };
 
   const isActive = (path) => location.pathname === path;
 
   // Navigation items
-  const navItems = user ? [
-    { 
-      href: "/dashboard", 
-      label: "Dashboard", 
-      icon: BarChart3,
-    },
-    { 
-      href: "/verify", 
-      label: "Verify Document", 
-      icon: FileSearch,
-    },
-    { 
-      href: "/history", 
-      label: "History", 
-      icon: History,
-    },
-    { 
-      href: "/institutions", 
-      label: "Institutions", 
-      icon: Building2,
-    },
-    { 
-      href: "/admin", 
-      label: "Admin", 
-      icon: Shield,
-    },
-  ] : [
-    { href: "/", label: "Home" },
-    { href: "/help", label: "Help" },
-  ];
+  const navItems = user
+    ? [
+        {
+          href: "/dashboard",
+          label: "Dashboard",
+          icon: BarChart3,
+        },
+        {
+          href: "/verify",
+          label: "Verify Document",
+          icon: FileSearch,
+        },
+        {
+          href: "/history",
+          label: "History",
+          icon: History,
+        },
+      ]
+    : [
+        { href: "/", label: "Home" },
+        { href: "/help", label: "Help" },
+      ];
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+        <Link
+          to="/"
+          className="flex items-center space-x-3 hover:opacity-90 transition-opacity"
+        >
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-hero-gradient">
             <Shield className="h-6 w-6 text-white" />
           </div>
@@ -131,7 +126,7 @@ export function Navbar() {
             <h1 className="font-display text-xl font-bold text-foreground">
               AuthenTech
             </h1>
-            <p className="text-xs text-muted-foreground">Jharkhand HED</p>
+            
           </div>
         </Link>
 
@@ -157,11 +152,10 @@ export function Navbar() {
             <div className="hidden md:flex items-center space-x-3">
               <div className="flex items-center space-x-2">
                 <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{user.name || user.email}</span>
+                <span className="text-sm font-medium">
+                  {user.name || user.email}
+                </span>
               </div>
-              <Button variant="ghost" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
               <Button variant="ghost" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -169,10 +163,14 @@ export function Navbar() {
           ) : (
             <div className="hidden md:flex items-center space-x-2">
               <Link to="/login">
-                <Button variant="ghost" size="sm">Login</Button>
+                <Button variant="ghost" size="sm">
+                  Login
+                </Button>
               </Link>
               <Link to="/verify">
-                <Button variant="hero" size="sm">Verify Document</Button>
+                <Button variant="hero" size="sm">
+                  Verify Document
+                </Button>
               </Link>
             </div>
           )}
@@ -194,10 +192,10 @@ export function Navbar() {
                     </div>
                   </div>
                 )}
-                
+
                 {navItems.map((item) => (
-                  <Link 
-                    key={item.href} 
+                  <Link
+                    key={item.href}
                     to={item.href}
                     onClick={() => setIsOpen(false)}
                   >
@@ -213,11 +211,11 @@ export function Navbar() {
 
                 {user ? (
                   <div className="pt-4 border-t space-y-2">
-                    <Button variant="ghost" className="w-full justify-start space-x-3">
-                      <Settings className="h-4 w-4" />
-                      <span>Settings</span>
-                    </Button>
-                    <Button variant="ghost" className="w-full justify-start space-x-3" onClick={handleLogout}>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start space-x-3"
+                      onClick={handleLogout}
+                    >
                       <LogOut className="h-4 w-4" />
                       <span>Logout</span>
                     </Button>
@@ -225,10 +223,14 @@ export function Navbar() {
                 ) : (
                   <div className="pt-4 border-t space-y-2">
                     <Link to="/login" onClick={() => setIsOpen(false)}>
-                      <Button variant="ghost" className="w-full">Login</Button>
+                      <Button variant="ghost" className="w-full">
+                        Login
+                      </Button>
                     </Link>
                     <Link to="/verify" onClick={() => setIsOpen(false)}>
-                      <Button variant="hero" className="w-full">Verify Document</Button>
+                      <Button variant="hero" className="w-full">
+                        Verify Document
+                      </Button>
                     </Link>
                   </div>
                 )}
