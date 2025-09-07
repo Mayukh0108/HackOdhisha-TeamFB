@@ -19,7 +19,7 @@ app.use(cors({
     'http://localhost:8080',
     'http://localhost:5173',
     'http://localhost:3000',
-    'https://hack-odhisha-team-fb.vercel.app/'
+    'https://hack-odhisha-team-fb.vercel.app'
     // Add any other domains you need
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
