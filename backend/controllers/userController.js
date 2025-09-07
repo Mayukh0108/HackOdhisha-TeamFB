@@ -280,7 +280,9 @@ export const fetchResults = async (req, res) => {
     res.json({
       success: true,
       data: {
-        results: user.lastResults || [],
+        name: user.lastResults.name,
+        institution: user.lastResults.institution,
+        date: user.lastResults.date,
       },
     });
   } catch (error) {
