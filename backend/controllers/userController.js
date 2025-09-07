@@ -254,3 +254,18 @@ export const getUserById = async (req, res) => {
     });
   }
 };
+
+export const updateUserResults = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, institution } = req.body;
+    if (!name || !institution) {
+      return res.status(400).json({ success: false, message: "Missing fields" });
+    }
+    // You can use a new model or add to User, here is a simple example:
+    const record = await User.create({ name, institution });
+    res.json({ success: true, data: record });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
