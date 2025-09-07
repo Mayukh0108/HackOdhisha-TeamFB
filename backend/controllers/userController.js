@@ -273,23 +273,18 @@ export const updateUserResults = async (req, res) => {
 
 export const fetchResults = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    // user id comes from auth middleware (JWT decoded)
+    const user = await User.findById(req.user.id).select("lastResults");
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
-    const lastResults = user.lastResults || [];
-    if (!lastResults || lastResults.length === 0) {
-      return res.status(404).json({ message: "No results found" });
-    }
-    res.status(200).json({
+
+    res.json({
       success: true,
-      data: lastResults,
+      data: user.lastResults, // only send the array
     });
   } catch (error) {
-    console.error("Error in results:", error);
-    res.status(500).json({
-      success: false,
-      message: error.message || "Internal server error",
-    });
+    console.error("Error in fetchResults:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
