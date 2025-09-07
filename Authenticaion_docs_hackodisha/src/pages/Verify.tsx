@@ -6,12 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Upload, 
-  FileText, 
-  Scan, 
-  CheckCircle, 
-  AlertTriangle, 
+import {
+  Upload,
+  FileText,
+  Scan,
+  CheckCircle,
+  AlertTriangle,
   XCircle,
   Camera,
   QrCode,
@@ -19,14 +19,14 @@ import {
   Copy,
   Eye,
   Clock,
-  Shield
+  Shield,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 // Mock user - in real app this would come from auth context
 const mockUser = {
   name: "Dr. Sarah Johnson",
-  role: "verifier" as const
+  role: "verifier" as const,
 };
 
 interface VerificationResult {
@@ -52,37 +52,37 @@ const PredictBBoxWidget = () => {
     if (!image) return;
     setLoading(true);
     setError(null);
-    
+
     try {
       // Simulate API call to /predict endpoint
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // For demo, we'll create a mock result
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = 800;
       canvas.height = 600;
-      const ctx = canvas.getContext('2d');
-      
+      const ctx = canvas.getContext("2d");
+
       if (ctx) {
         // Create mock bounding box visualization
-        ctx.fillStyle = '#f0f9ff';
+        ctx.fillStyle = "#f0f9ff";
         ctx.fillRect(0, 0, 800, 600);
-        
+
         // Draw bounding boxes
-        ctx.strokeStyle = '#22c55e';
+        ctx.strokeStyle = "#22c55e";
         ctx.lineWidth = 3;
         ctx.strokeRect(50, 50, 200, 100); // Seal
         ctx.strokeRect(300, 200, 250, 50); // Signature
         ctx.strokeRect(100, 400, 300, 80); // Certificate ID
-        
+
         // Add labels
-        ctx.fillStyle = '#22c55e';
-        ctx.font = '16px Inter';
-        ctx.fillText('Official Seal ✓', 55, 45);
-        ctx.fillText('Signature ✓', 305, 195);
-        ctx.fillText('Certificate ID ✓', 105, 395);
+        ctx.fillStyle = "#22c55e";
+        ctx.font = "16px Inter";
+        ctx.fillText("Official Seal ✓", 55, 45);
+        ctx.fillText("Signature ✓", 305, 195);
+        ctx.fillText("Certificate ID ✓", 105, 395);
       }
-      
+
       canvas.toBlob((blob) => {
         if (blob) {
           setResult(URL.createObjectURL(blob));
@@ -98,32 +98,36 @@ const PredictBBoxWidget = () => {
   return (
     <div className="space-y-4">
       <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4">
-        <input 
-          type="file" 
-          accept="image/*" 
+        <input
+          type="file"
+          accept="image/*"
           onChange={(e) => setImage(e.target.files?.[0] ?? null)}
           className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
         />
       </div>
-      
-      <Button 
-        onClick={handleUpload} 
-        disabled={!image || loading} 
+
+      <Button
+        onClick={handleUpload}
+        disabled={!image || loading}
         className="w-full"
       >
         {loading ? "Detecting Objects..." : "Detect Seals & Signatures"}
       </Button>
-      
+
       {error && (
         <div className="flex items-center space-x-2 text-destructive text-sm">
           <AlertTriangle className="h-4 w-4" />
           <span>{error}</span>
         </div>
       )}
-      
+
       {result && (
         <div className="rounded-xl overflow-hidden border shadow-sm">
-          <img src={result} alt="Bounding Box Detection Result" className="w-full h-auto" />
+          <img
+            src={result}
+            alt="Bounding Box Detection Result"
+            className="w-full h-auto"
+          />
         </div>
       )}
     </div>
@@ -131,31 +135,13 @@ const PredictBBoxWidget = () => {
 };
 
 export default function Verify() {
-
   // ...state declarations...
-
-  // Send uploaded file to verification API
-  const sendFileToVerificationAPI = async () => {
-    if (!uploadedFile) return;
-    const formData = new FormData();
-    formData.append("file", uploadedFile);
-    try {
-      const response = await fetch("https://hackodisha-forge-detection-api-1.onrender.com/predict", {
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      console.log("Verification API result:", result);
-    } catch (error) {
-      console.error("Error sending file to verification API:", error);
-    }
-  };
-
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [verificationStep, setVerificationStep] = useState(0);
   const [ocrData, setOcrData] = useState<any>(null);
-  const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
+  const [verificationResult, setVerificationResult] =
+    useState<VerificationResult | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
@@ -164,7 +150,21 @@ export default function Verify() {
     if (file) {
       setUploadedFile(file);
       setVerificationStep(1);
-      // Simulate OCR processing
+      // Immediately send file to verification API
+      const formData = new FormData();
+      formData.append("file", file);
+      fetch("https://hackodisha-forge-detection-api-1.onrender.com/predict", {
+        method: "POST",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          console.log("Verification API result:", result);
+        })
+        .catch((error) => {
+          console.error("Error sending file to verification API:", error);
+        });
+      // Also extract data for UI
       processOCR(file);
     }
   }, []);
@@ -172,11 +172,11 @@ export default function Verify() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg'],
-      'application/pdf': ['.pdf']
+      "image/*": [".png", ".jpg", ".jpeg"],
+      "application/pdf": [".pdf"],
     },
     maxSize: 10 * 1024 * 1024, // 10MB
-    multiple: false
+    multiple: false,
   });
 
   const processOCR = async (file: File) => {
@@ -184,19 +184,44 @@ export default function Verify() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const response = await fetch("https://hackodisha-ocr-api.onrender.com/extract/", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://hackodisha-ocr-api.onrender.com/extract/",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       if (!response.ok) throw new Error("OCR API error");
       const ocrResult = await response.json();
       setOcrData(ocrResult);
+      console.log("OCR Result:", ocrResult.Name, ocrResult.Institution);
+      if (ocrResult.Name && ocrResult.Institution) {
+        const token = localStorage.getItem("authToken");
+        fetch(
+          "https://hackodhisha-teamfb-backend.onrender.com/api/users/results",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({
+              name: ocrResult.Name,
+              institution: ocrResult.Institution,
+            }),
+            credentials: "include",
+          }
+        )
+          .then((res) => res.json())
+          .then((data) => console.log("Stored in DB:", data))
+          .catch((err) => console.error("DB store error:", err));
+      }
       setVerificationStep(2);
     } catch (error) {
       toast({
         variant: "destructive",
         title: "OCR Processing Failed",
-        description: "Could not extract text from document"
+        description: "Could not extract text from document",
       });
     } finally {
       setIsProcessing(false);
@@ -205,11 +230,11 @@ export default function Verify() {
 
   const processVerification = async (data: any) => {
     setIsProcessing(true);
-    
+
     try {
       // Simulate verification process
-      await new Promise(resolve => setTimeout(resolve, 4000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 4000));
+
       const mockResult: VerificationResult = {
         status: "valid",
         confidence: 97,
@@ -217,29 +242,29 @@ export default function Verify() {
           "Institution found in verified database",
           "Certificate ID format matches institutional standards",
           "Digital signature verified",
-          "Official seal detected and authenticated"
+          "Official seal detected and authenticated",
         ],
         details: {
           institutionMatch: true,
           certificateId: true,
           signatures: true,
           seals: true,
-          formatting: true
-        }
+          formatting: true,
+        },
       };
-      
+
       setVerificationResult(mockResult);
       setVerificationStep(3);
-      
+
       toast({
         title: "Verification Complete",
-        description: `Document verified with ${mockResult.confidence}% confidence`
+        description: `Document verified with ${mockResult.confidence}% confidence`,
       });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Verification Failed",
-        description: "Could not verify document against registry"
+        description: "Could not verify document against registry",
       });
     } finally {
       setIsProcessing(false);
@@ -256,8 +281,8 @@ export default function Verify() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-card-glass to-accent/5">
-      <Navbar/>
-      
+      <Navbar />
+
       <div className="container py-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
@@ -274,28 +299,52 @@ export default function Verify() {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  verificationStep >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                }`}>
-                  {verificationStep >= 1 ? <CheckCircle className="h-4 w-4" /> : <Upload className="h-4 w-4" />}
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    verificationStep >= 1
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {verificationStep >= 1 ? (
+                    <CheckCircle className="h-4 w-4" />
+                  ) : (
+                    <Upload className="h-4 w-4" />
+                  )}
                 </div>
                 <span className="font-medium">Upload</span>
               </div>
-              
+
               <div className="flex items-center space-x-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  verificationStep >= 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                }`}>
-                  {verificationStep >= 2 ? <CheckCircle className="h-4 w-4" /> : <Scan className="h-4 w-4" />}
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    verificationStep >= 2
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {verificationStep >= 2 ? (
+                    <CheckCircle className="h-4 w-4" />
+                  ) : (
+                    <Scan className="h-4 w-4" />
+                  )}
                 </div>
                 <span className="font-medium">Extract</span>
               </div>
-              
+
               <div className="flex items-center space-x-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  verificationStep >= 3 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                }`}>
-                  {verificationStep >= 3 ? <CheckCircle className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    verificationStep >= 3
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {verificationStep >= 3 ? (
+                    <CheckCircle className="h-4 w-4" />
+                  ) : (
+                    <Shield className="h-4 w-4" />
+                  )}
                 </div>
                 <span className="font-medium">Verify</span>
               </div>
@@ -317,12 +366,16 @@ export default function Verify() {
                   <div
                     {...getRootProps()}
                     className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-                      isDragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50'
+                      isDragActive
+                        ? "border-primary bg-primary/5"
+                        : "border-muted-foreground/25 hover:border-primary/50"
                     }`}
                   >
                     <input {...getInputProps()} />
                     <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-lg font-medium mb-2">Drop certificate here</p>
+                    <p className="text-lg font-medium mb-2">
+                      Drop certificate here
+                    </p>
                     <p className="text-sm text-muted-foreground mb-4">
                       or click to browse files
                     </p>
@@ -338,28 +391,26 @@ export default function Verify() {
                           {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
                         </p>
                       </div>
-                      <Button variant="ghost" size="sm" onClick={resetVerification}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={resetVerification}
+                      >
                         <XCircle className="h-4 w-4" />
                       </Button>
                     </div>
-                    {/* Send to Verification API */}
-                    <Button
-                      onClick={sendFileToVerificationAPI}
-                      disabled={!uploadedFile}
-                      variant="secondary"
-                      className="w-full"
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      Send to Verification API
-                    </Button>
-                    <div className="text-xs text-muted-foreground">(Logs result to console)</div>
                     {isProcessing && verificationStep < 3 && (
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
                           <Clock className="h-4 w-4 animate-spin" />
-                          <span className="text-sm">Processing document...</span>
+                          <span className="text-sm">
+                            Processing document...
+                          </span>
                         </div>
-                        <Progress value={verificationStep * 33} className="h-1" />
+                        <Progress
+                          value={verificationStep * 33}
+                          className="h-1"
+                        />
                       </div>
                     )}
                   </div>
@@ -397,18 +448,21 @@ export default function Verify() {
                       <TabsTrigger value="fields">Key Fields</TabsTrigger>
                       <TabsTrigger value="bbox">Detection</TabsTrigger>
                     </TabsList>
-                    
+
                     <TabsContent value="fields" className="space-y-3">
                       {Object.entries(ocrData).map(([key, value]) => (
-                        <div key={key} className="flex justify-between items-center p-2 bg-muted/50 rounded">
+                        <div
+                          key={key}
+                          className="flex justify-between items-center p-2 bg-muted/50 rounded"
+                        >
                           <span className="text-sm font-medium capitalize">
-                            {key.replace(/([A-Z])/g, ' $1')}:
+                            {key.replace(/([A-Z])/g, " $1")}:
                           </span>
                           <span className="text-sm">{String(value)}</span>
                         </div>
                       ))}
                     </TabsContent>
-                    
+
                     <TabsContent value="bbox">
                       <PredictBBoxWidget />
                     </TabsContent>
@@ -437,43 +491,63 @@ export default function Verify() {
                   <div className="space-y-4">
                     {/* Status Badge */}
                     <div className="text-center">
-                      <Badge 
+                      <Badge
                         variant={
-                          verificationResult.status === 'valid' ? 'default' :
-                          verificationResult.status === 'review' ? 'secondary' : 
-                          'destructive'
+                          verificationResult.status === "valid"
+                            ? "default"
+                            : verificationResult.status === "review"
+                            ? "secondary"
+                            : "destructive"
                         }
                         className="text-lg px-4 py-2"
                       >
-                        {verificationResult.status === 'valid' && <CheckCircle className="h-4 w-4 mr-2" />}
-                        {verificationResult.status === 'review' && <AlertTriangle className="h-4 w-4 mr-2" />}
-                        {verificationResult.status === 'invalid' && <XCircle className="h-4 w-4 mr-2" />}
+                        {verificationResult.status === "valid" && (
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                        )}
+                        {verificationResult.status === "review" && (
+                          <AlertTriangle className="h-4 w-4 mr-2" />
+                        )}
+                        {verificationResult.status === "invalid" && (
+                          <XCircle className="h-4 w-4 mr-2" />
+                        )}
                         {verificationResult.status.toUpperCase()}
                       </Badge>
                     </div>
 
                     {/* Confidence Score */}
                     <div className="text-center">
-                      <div className="text-3xl font-bold">{verificationResult.confidence}%</div>
-                      <p className="text-sm text-muted-foreground">Confidence Score</p>
-                      <Progress value={verificationResult.confidence} className="h-2 mt-2" />
+                      <div className="text-3xl font-bold">
+                        {verificationResult.confidence}%
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Confidence Score
+                      </p>
+                      <Progress
+                        value={verificationResult.confidence}
+                        className="h-2 mt-2"
+                      />
                     </div>
 
                     {/* Verification Details */}
                     <div className="space-y-2">
                       <h4 className="font-medium">Verification Details</h4>
-                      {Object.entries(verificationResult.details).map(([key, passed]) => (
-                        <div key={key} className="flex items-center justify-between">
-                          <span className="text-sm capitalize">
-                            {key.replace(/([A-Z])/g, ' $1')}
-                          </span>
-                          {passed ? (
-                            <CheckCircle className="h-4 w-4 text-success" />
-                          ) : (
-                            <XCircle className="h-4 w-4 text-destructive" />
-                          )}
-                        </div>
-                      ))}
+                      {Object.entries(verificationResult.details).map(
+                        ([key, passed]) => (
+                          <div
+                            key={key}
+                            className="flex items-center justify-between"
+                          >
+                            <span className="text-sm capitalize">
+                              {key.replace(/([A-Z])/g, " $1")}
+                            </span>
+                            {passed ? (
+                              <CheckCircle className="h-4 w-4 text-success" />
+                            ) : (
+                              <XCircle className="h-4 w-4 text-destructive" />
+                            )}
+                          </div>
+                        )
+                      )}
                     </div>
 
                     {/* Reasons */}
