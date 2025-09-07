@@ -15,13 +15,7 @@ app.use(cookieParser());
 
 // Configure CORS properly
 app.use(cors({
-  origin: [
-    'http://localhost:8080',
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://hack-odhisha-team-fb.vercel.app'
-    // Add any other domains you need
-  ],
+  origin: ["*"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
