@@ -275,21 +275,22 @@ export const updateUserResults = async (req, res) => {
 
 export const fetchResults = async (req, res) => {
   try {
-    const userId = req.user.id;
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, message: "Invalid user id" });
-    }
-
-    const user = await User.findById(userId).select("lastResults");
+    const user = await User.findById(req.user.id);
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
-
-    // Send entire lastResults array
-    res.json({ success: true, data: user.lastResults });
+    res.json({
+      success: true,
+      data: {
+        results: user.lastResults || [],
+      },
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Error in results:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
   }
 };
 
