@@ -53,3 +53,52 @@ A[User Uploads Document] --> B[YOLOv8n detects forgery/tampering]
 B --> C[Gemini API extracts structured details]  
 C --> D[FastAPI backend processes results]  
 D --> E[UI displays result: Original/Fake]  
+
+```
+
+## 🎬 Live Prediction Instances  
+
+Our system predicts document authenticity in a **smooth, user-friendly way** directly from the live website.  
+
+There are **3 possible outcomes**:  
+
+1. 🟥 **Fake Document Detected**  
+   The system flags manipulated or tampered documents.  
+   - *Example Screenshot:*
+     
+    ![WhatsApp Image 2025-09-08 at 00 15 45_01e3e89b](https://github.com/user-attachments/assets/43dcdc10-600c-4fb6-a23a-686291d693d0)
+ 
+
+2. 🟩 **Original Document Detected**  
+   The system verifies and validates genuine documents.  
+   - *Example Screenshot:*
+      
+![WhatsApp Image 2025-09-08 at 00 17 19_c0d96095](https://github.com/user-attachments/assets/909d99f9-be38-4c16-b348-f0d8d92b095f)
+ 
+     
+
+3. 🟨 **Invalid Document Format**  
+   If the uploaded file is not a valid certificate/document, the system detects and alerts the user.  
+   - *Example Screenshot:*  
+
+   ![WhatsApp Image 2025-09-08 at 00 18 08_e5b00c31](https://github.com/user-attachments/assets/8eab1a87-e279-4a0b-9931-33334a274f80)
+
+     
+
+
+
+## 🌐 Website Snapshots  
+
+Here are some snapshots of the **AuthenTech web platform**:  
+
+![WhatsApp Image 2025-09-08 at 00 22 12_fdbd73f7](https://github.com/user-attachments/assets/996b3e46-676f-4140-926f-7f23f56e46e4)
+
+
+![WhatsApp Image 2025-09-08 at 00 23 39_2af45e2a](https://github.com/user-attachments/assets/e6c0f20e-fcdd-434d-8c94-48ab602a0283)
+
+
+![WhatsApp Image 2025-09-08 at 00 23 39_2af45e2a](https://github.com/user-attachments/assets/250650dc-7680-4715-bed4-76aa4c10b540)
+
+
+![WhatsApp Image 2025-09-08 at 00 24 24_20af6070](https://github.com/user-attachments/assets/06077d96-7d45-49be-9578-4b94c0128d09)
+
