@@ -321,22 +321,26 @@ export default function Dashboard() {
                     </div>
                   </div>
                 ) : recentVerifications.length > 0 ? (
-                  recentVerifications.slice(0, 5).map((verification) => (
-                    <div
-                      key={verification._id}
-                      className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium">{verification.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {verification.institution}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(verification.date)}
-                        </p>
+                  recentVerifications
+                    .slice()
+                    .reverse()
+                    .slice(0, 5)
+                    .map((verification) => (
+                      <div
+                        key={verification._id}
+                        className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
+                      >
+                        <div className="flex-1">
+                          <p className="font-medium">{verification.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {verification.institution}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatDate(verification.date)}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    ))
                 ) : (
                   <div className="flex items-center justify-center p-8">
                     <div className="text-sm text-muted-foreground">
@@ -369,35 +373,38 @@ export default function Dashboard() {
                         </div>
                       ) : recentVerifications.length > 0 ? (
                         <div className="space-y-3 max-h-96 overflow-y-auto">
-                          {recentVerifications.map((verification, index) => (
-                            <div
-                              key={verification._id}
-                              className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border"
-                            >
-                              <div className="flex items-center space-x-4">
-                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                  <span className="text-sm font-medium text-primary">
-                                    {index + 1}
-                                  </span>
+                          {recentVerifications
+                            .slice()
+                            .reverse()
+                            .map((verification, index) => (
+                              <div
+                                key={verification._id}
+                                className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border"
+                              >
+                                <div className="flex items-center space-x-4">
+                                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <span className="text-sm font-medium text-primary">
+                                      {index + 1}
+                                    </span>
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="font-medium">
+                                      {verification.name}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {verification.institution}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      {formatDate(verification.date)}
+                                    </p>
+                                  </div>
                                 </div>
-                                <div className="flex-1">
-                                  <p className="font-medium">
-                                    {verification.name}
-                                  </p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {verification.institution}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {formatDate(verification.date)}
-                                  </p>
-                                </div>
+                                <Badge variant="outline" className="ml-4">
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                  Processed
+                                </Badge>
                               </div>
-                              <Badge variant="outline" className="ml-4">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                Processed
-                              </Badge>
-                            </div>
-                          ))}
+                            ))}
                         </div>
                       ) : (
                         <div className="flex items-center justify-center p-8">
