@@ -263,8 +263,8 @@ export const updateUserResults = async (req, res) => {
       return res.status(400).json({ success: false, message: "Missing fields" });
     }
     const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { $set: { name, institution } },
+      userId,
+      { $push: { lastResults: { name, institution, date: new Date() } } },
       { new: true }
     );
     res.json({ success: true, data: user });
