@@ -277,13 +277,13 @@ export const fetchResults = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json({
+    const lastResults = user.lastResults || [];
+    if (!lastResults || lastResults.length === 0) {
+      return res.status(404).json({ message: "No results found" });
+    }
+    res.status(200).json({
       success: true,
-      data: {
-        name: user.lastResults.name,
-        institution: user.lastResults.institution,
-        date: user.lastResults.date,
-      },
+      data: lastResults,
     });
   } catch (error) {
     console.error("Error in results:", error);
