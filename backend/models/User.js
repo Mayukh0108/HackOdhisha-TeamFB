@@ -22,10 +22,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    lastResults:{
-        type: [Object],
-        default: []
+    lastResults: [
+    {
+      name: { type: String, required: true },
+      institution: { type: String, required: true },
+      date: { type: Date, default: Date.now },
     },
+],
     createdAt: {
         type: Date,
         default: Date.now
