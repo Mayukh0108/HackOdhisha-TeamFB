@@ -276,25 +276,45 @@ export const updateUserResults = async (req, res) => {
 export const fetchResults = async (req, res) => {
   try {
     const userId = req.user.id;
-    const user = await User.findById(userId);
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid user id" });
+    }
+
+    const user = await User.findById(userId).select("lastResults");
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
-    } 
+    }
+
+    // Send entire lastResults array
     res.json({ success: true, data: user.lastResults });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
-  } 
+  }
 };
 
-export const fetchResultsbyId = async (req, res) => {
+// 2️⃣ Get ONE particular result by index (or id if stored inside object)
+export const fetchResultByIndex = async (req, res) => {
   try {
-    const userId = req.params.id;
-    const user = await User.findById(userId);
+    const userId = req.user.id;
+    const index = parseInt(req.params.index, 10); // e.g., /user/result/0
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid user id" });
+    }
+
+    const user = await User.findById(userId).select("lastResults");
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
-    } 
-    res.json({ success: true, data: user.lastResults });
+    }
+
+    if (index < 0 || index >= user.lastResults.length) {
+      return res.status(404).json({ success: false, message: "Result not found" });
+    }
+
+    // Send only that one result
+    res.json({ success: true, data: user.lastResults[index] });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
-  }   
+  }
 };

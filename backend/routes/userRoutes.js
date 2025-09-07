@@ -7,7 +7,7 @@ import {
     getUser,
     updateUserResults,
     fetchResults,
-    fetchResultsbyId
+    fetchResultByIndex,
     
 } from "../controllers/userController.js";
 import { userAuth } from "../middlewares/Auth.js";
@@ -22,6 +22,6 @@ router.get("/", userAuth, getAllUsers);
 router.get("/:id", userAuth, getUserById);
 router.post("/results", userAuth, updateUserResults);
 router.get("/fetch",  userAuth, fetchResults);
-router.get("/fetch/:id", userAuth, fetchResultsbyId);
+router.get("/fetch/:id", userAuth, fetchResultByIndex);
 
 export default router;
