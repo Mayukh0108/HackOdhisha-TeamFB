@@ -10,19 +10,21 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Use cookie parser first
 app.use(cookieParser());
 
-// Configure CORS properly
+const allowedOrigins = [
+  "https://hack-odhisha-team-fb.vercel.app", 
+  "http://localhost:3000" 
+];
+
 app.use(cors({
-  origin: ["*"],
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// REMOVE THIS LINE: app.options('*', cors());
-
+// Parse body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
