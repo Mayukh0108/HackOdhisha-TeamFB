@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  Shield, 
-  Mail, 
-  Phone, 
+import {
+  Shield,
+  Mail,
+  Phone,
   MapPin,
   ExternalLink,
   Github,
   Twitter,
-  Linkedin
+  Linkedin,
 } from "lucide-react";
 
 const quickLinks = [
@@ -47,15 +47,16 @@ export function Footer() {
               </div>
               <div>
                 <h3 className="font-display text-xl font-bold">AuthenTech</h3>
-                <p className="text-sm text-white/70">Jharkhand HED</p>
+                <p className="text-sm text-white/70">Team Firewall Breakers</p>
               </div>
             </div>
             <p className="text-white/80">
-              Securing academic credentials with cutting-edge verification technology.
+              Securing academic credentials with cutting-edge verification
+              technology.
             </p>
             <div className="flex items-center space-x-2">
               <Badge variant="secondary" className="bg-white/20 text-white">
-                Government Authorized
+                Trusted Platform
               </Badge>
             </div>
           </div>
@@ -66,7 +67,7 @@ export function Footer() {
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.href + link.label}>
-                  <Link 
+                  <Link
                     to={link.href}
                     className="text-white/80 hover:text-white transition-colors"
                   >
@@ -83,7 +84,7 @@ export function Footer() {
             <ul className="space-y-3">
               {resources.map((link) => (
                 <li key={link.href + link.label}>
-                  <Link 
+                  <Link
                     to={link.href}
                     className="text-white/80 hover:text-white transition-colors inline-flex items-center"
                   >
@@ -102,29 +103,44 @@ export function Footer() {
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4 text-white/60" />
                 <span className="text-sm text-white/80">
-                  Jharkhand Higher Education Dept.<br />
-                  Ranchi, Jharkhand
+                  Team Firewall Breakers
+                  <br />
+                  Kolkata, West-Bengal
                 </span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-white/60" />
-                <span className="text-sm text-white/80">+91 8777240684</span>
+                <span className="text-sm text-white/80">+91 8335867482</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-white/60" />
-                <span className="text-sm text-white/80">support@jharkhand.gov.in</span>
+                <span className="text-sm text-white/80">
+                  support@authentech.com
+                </span>
               </div>
             </div>
 
             {/* Social Links */}
             <div className="flex items-center space-x-2 mt-4">
-              <Button variant="ghost" size="icon" className="text-white/60 hover:text-white">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white/60 hover:text-white"
+              >
                 <Twitter className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-white/60 hover:text-white">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white/60 hover:text-white"
+              >
                 <Linkedin className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-white/60 hover:text-white">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white/60 hover:text-white"
+              >
                 <Github className="h-4 w-4" />
               </Button>
             </div>
@@ -139,7 +155,7 @@ export function Footer() {
             </div>
             <div className="flex flex-wrap gap-6">
               {legal.map((link) => (
-                <Link 
+                <Link
                   key={link.href + link.label}
                   to={link.href}
                   className="text-sm text-white/60 hover:text-white transition-colors"

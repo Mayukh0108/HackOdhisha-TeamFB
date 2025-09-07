@@ -8,8 +8,8 @@ export default function Privacy() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar user={user} />
-      
+      <Navbar />
+
       <div className="container py-8">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Header */}
@@ -35,15 +35,19 @@ export default function Privacy() {
               </CardHeader>
               <CardContent className="prose prose-slate max-w-none">
                 <p>
-                  The Jharkhand Higher Education Department's AuthenTech platform collects only the 
-                  necessary information required to verify academic credentials and maintain system security.
+                  The AuthenTech platform by Team Firewall Breakers collects
+                  only the necessary information required to verify academic
+                  credentials and maintain system security.
                 </p>
                 <h4>Information We Collect:</h4>
                 <ul>
                   <li>Document images/files uploaded for verification</li>
                   <li>Account information (name, email, role, institution)</li>
                   <li>Verification history and audit logs</li>
-                  <li>Technical information (IP address, browser type, usage patterns)</li>
+                  <li>
+                    Technical information (IP address, browser type, usage
+                    patterns)
+                  </li>
                 </ul>
               </CardContent>
             </Card>
@@ -58,14 +62,20 @@ export default function Privacy() {
               <CardContent className="prose prose-slate max-w-none">
                 <h4>Primary Uses:</h4>
                 <ul>
-                  <li>Authenticating academic credentials against institutional databases</li>
+                  <li>
+                    Authenticating academic credentials against institutional
+                    databases
+                  </li>
                   <li>Maintaining verification audit trails for compliance</li>
                   <li>Improving system accuracy and security measures</li>
                   <li>Providing customer support and technical assistance</li>
-                  <li>Generating aggregated statistics for educational insights</li>
+                  <li>
+                    Generating aggregated statistics for educational insights
+                  </li>
                 </ul>
                 <p>
-                  We never sell, rent, or share personal information with third parties for commercial purposes.
+                  We never sell, rent, or share personal information with third
+                  parties for commercial purposes.
                 </p>
               </CardContent>
             </Card>
@@ -80,11 +90,26 @@ export default function Privacy() {
               <CardContent className="prose prose-slate max-w-none">
                 <h4>Security Measures:</h4>
                 <ul>
-                  <li><strong>Encryption:</strong> All data transmitted using TLS 1.3 encryption</li>
-                  <li><strong>Storage:</strong> Data encrypted at rest using AES-256</li>
-                  <li><strong>Access Control:</strong> Role-based access with multi-factor authentication</li>
-                  <li><strong>Monitoring:</strong> 24/7 security monitoring and intrusion detection</li>
-                  <li><strong>Compliance:</strong> Follows government cybersecurity guidelines</li>
+                  <li>
+                    <strong>Encryption:</strong> All data transmitted using TLS
+                    1.3 encryption
+                  </li>
+                  <li>
+                    <strong>Storage:</strong> Data encrypted at rest using
+                    AES-256
+                  </li>
+                  <li>
+                    <strong>Access Control:</strong> Role-based access with
+                    multi-factor authentication
+                  </li>
+                  <li>
+                    <strong>Monitoring:</strong> 24/7 security monitoring and
+                    intrusion detection
+                  </li>
+                  <li>
+                    <strong>Compliance:</strong> Follows government
+                    cybersecurity guidelines
+                  </li>
                 </ul>
               </CardContent>
             </Card>
@@ -97,16 +122,34 @@ export default function Privacy() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="prose prose-slate max-w-none">
-                <p>Under applicable data protection laws, you have the following rights:</p>
+                <p>
+                  Under applicable data protection laws, you have the following
+                  rights:
+                </p>
                 <ul>
-                  <li><strong>Access:</strong> Request copies of your personal data</li>
-                  <li><strong>Rectification:</strong> Correct inaccurate or incomplete data</li>
-                  <li><strong>Erasure:</strong> Request deletion of your personal data</li>
-                  <li><strong>Portability:</strong> Receive your data in a structured format</li>
-                  <li><strong>Object:</strong> Object to processing of your personal data</li>
+                  <li>
+                    <strong>Access:</strong> Request copies of your personal
+                    data
+                  </li>
+                  <li>
+                    <strong>Rectification:</strong> Correct inaccurate or
+                    incomplete data
+                  </li>
+                  <li>
+                    <strong>Erasure:</strong> Request deletion of your personal
+                    data
+                  </li>
+                  <li>
+                    <strong>Portability:</strong> Receive your data in a
+                    structured format
+                  </li>
+                  <li>
+                    <strong>Object:</strong> Object to processing of your
+                    personal data
+                  </li>
                 </ul>
                 <p>
-                  To exercise these rights, contact us at privacy@authentech.jharkhand.gov.in
+                  To exercise these rights, contact us at privacy@authentech.com
                 </p>
               </CardContent>
             </Card>
@@ -115,12 +158,20 @@ export default function Privacy() {
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-4">Contact Information</h3>
                 <p className="text-sm text-muted-foreground">
-                  For privacy-related questions or concerns, contact our Data Protection Officer:
+                  For privacy-related questions or concerns, contact our Data
+                  Protection Officer:
                 </p>
                 <div className="mt-4 space-y-2 text-sm">
-                  <p><strong>Email:</strong> privacy@authentech.jharkhand.gov.in</p>
-                  <p><strong>Phone:</strong> +91-651-XXX-XXXX</p>
-                  <p><strong>Address:</strong> Jharkhand Higher Education Department, Ranchi</p>
+                  <p>
+                    <strong>Email:</strong> privacy@authentech.com
+                  </p>
+                  <p>
+                    <strong>Phone:</strong> +91-651-XXX-XXXX
+                  </p>
+                  <p>
+                    <strong>Address:</strong> Team Firewall Breakers,
+                    Bhubaneswar
+                  </p>
                 </div>
               </CardContent>
             </Card>

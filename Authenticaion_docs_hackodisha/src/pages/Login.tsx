@@ -5,7 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Shield,
@@ -15,7 +21,7 @@ import {
   AlertCircle,
   ArrowLeft,
   Mail,
-  Lock
+  Lock,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import graduationImage from "@/assets/graduation-digital.jpg";
@@ -72,7 +78,6 @@ export default function Login() {
           title: "OTP Sent",
           description: "Check your email for the verification code",
         });
-
       } else {
         throw new Error(data.message || "Failed to send OTP");
       }
@@ -201,7 +206,7 @@ export default function Login() {
               </div>
               <div>
                 <h1 className="font-display text-2xl font-bold">AuthenTech</h1>
-                <p className="text-white/80">Jharkhand Higher Education</p>
+                <p className="text-white/80">Team Firewall Breakers</p>
               </div>
             </div>
 
@@ -209,23 +214,23 @@ export default function Login() {
               Secure Academic Verification
             </h2>
             <p className="text-xl text-white/90 mb-8">
-              Join thousands of institutions and verifiers using the most trusted
-              certificate validation platform.
+              Join thousands of institutions and verifiers using the most
+              trusted certificate validation platform.
             </p>
 
             {/* Trust Badges */}
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <CheckCircle className="h-5 w-5 text-success" />
-                <span>Government Authorized Platform</span>
+                <span>Authorized Platform</span>
               </div>
               <div className="flex items-center space-x-3">
                 <CheckCircle className="h-5 w-5 text-success" />
-                <span>Bank-Grade Security</span>
+                <span>Professional-Grade Security</span>
               </div>
               <div className="flex items-center space-x-3">
                 <CheckCircle className="h-5 w-5 text-success" />
-                <span>99.7% Accuracy Rate</span>
+                <span>Upto 99.7% Accuracy Rate</span>
               </div>
             </div>
           </div>
@@ -236,7 +241,10 @@ export default function Login() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md space-y-6">
           {/* Back to Home */}
-          <Link to="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
+          <Link
+            to="/"
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
@@ -261,7 +269,11 @@ export default function Login() {
 
             <CardContent>
               {!otpSent ? (
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+                <Tabs
+                  value={activeTab}
+                  onValueChange={setActiveTab}
+                  className="space-y-4"
+                >
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="login">Login</TabsTrigger>
                     <TabsTrigger value="register">Register</TabsTrigger>
@@ -286,8 +298,14 @@ export default function Login() {
                         </div>
                       </div>
 
-                      <Button type="submit" className="w-full" disabled={isLoading}>
-                        {isLoading ? "Sending OTP..." : "Send Verification Code"}
+                      <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={isLoading}
+                      >
+                        {isLoading
+                          ? "Sending OTP..."
+                          : "Send Verification Code"}
                       </Button>
                     </form>
                   </TabsContent>
@@ -343,7 +361,9 @@ export default function Login() {
                             type={showPassword ? "text" : "password"}
                             placeholder="Create a password"
                             value={password}
-                            onChange={(e) => handlePasswordChange(e.target.value)}
+                            onChange={(e) =>
+                              handlePasswordChange(e.target.value)
+                            }
                             className="pl-10 pr-10"
                             required
                           />
@@ -354,7 +374,11 @@ export default function Login() {
                             className="absolute right-2 top-1 h-8 w-8 p-0"
                             onClick={() => setShowPassword(!showPassword)}
                           >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
                           </Button>
                         </div>
 
@@ -363,22 +387,31 @@ export default function Login() {
                           <div className="space-y-1">
                             <div className="flex items-center justify-between text-xs">
                               <span>Password Strength</span>
-                              <span className={
-                                passwordStrength >= 75 ? "text-success" :
-                                  passwordStrength >= 50 ? "text-warning" :
-                                    "text-destructive"
-                              }>
-                                {passwordStrength >= 75 ? "Strong" :
-                                  passwordStrength >= 50 ? "Medium" :
-                                    "Weak"}
+                              <span
+                                className={
+                                  passwordStrength >= 75
+                                    ? "text-success"
+                                    : passwordStrength >= 50
+                                    ? "text-warning"
+                                    : "text-destructive"
+                                }
+                              >
+                                {passwordStrength >= 75
+                                  ? "Strong"
+                                  : passwordStrength >= 50
+                                  ? "Medium"
+                                  : "Weak"}
                               </span>
                             </div>
                             <div className="h-1 bg-muted rounded-full overflow-hidden">
                               <div
-                                className={`h-full transition-all duration-300 ${passwordStrength >= 75 ? "bg-success" :
-                                  passwordStrength >= 50 ? "bg-warning" :
-                                    "bg-destructive"
-                                  }`}
+                                className={`h-full transition-all duration-300 ${
+                                  passwordStrength >= 75
+                                    ? "bg-success"
+                                    : passwordStrength >= 50
+                                    ? "bg-warning"
+                                    : "bg-destructive"
+                                }`}
                                 style={{ width: `${passwordStrength}%` }}
                               />
                             </div>
@@ -386,7 +419,11 @@ export default function Login() {
                         )}
                       </div>
 
-                      <Button type="submit" className="w-full" disabled={isLoading}>
+                      <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={isLoading}
+                      >
                         {isLoading ? "Creating Account..." : "Create Account"}
                       </Button>
                     </form>
@@ -411,7 +448,11 @@ export default function Login() {
                   </div>
 
                   <div className="flex space-x-2">
-                    <Button type="submit" className="flex-1" disabled={isLoading}>
+                    <Button
+                      type="submit"
+                      className="flex-1"
+                      disabled={isLoading}
+                    >
                       {isLoading ? "Verifying..." : "Verify Code"}
                     </Button>
                     <Button
@@ -451,9 +492,13 @@ export default function Login() {
           {/* Legal Links */}
           <div className="text-center text-xs text-muted-foreground">
             By continuing, you agree to our{" "}
-            <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>
-            {" "}and{" "}
-            <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+            <Link to="/terms" className="text-primary hover:underline">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link to="/privacy" className="text-primary hover:underline">
+              Privacy Policy
+            </Link>
           </div>
         </div>
       </div>

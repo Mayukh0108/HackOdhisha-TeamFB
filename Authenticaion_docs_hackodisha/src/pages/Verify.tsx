@@ -173,21 +173,7 @@ export default function Verify() {
       // Set new file and start process
       setUploadedFile(file);
       setVerificationStep(1);
-      // Immediately send file to verification API
-      const formData = new FormData();
-      formData.append("file", file);
-      fetch("https://hackodisha-forge-detection-api-1.onrender.com/predict", {
-        method: "POST",
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((result) => {
-          console.log("Verification API result:", result);
-        })
-        .catch((error) => {
-          console.error("Error sending file to verification API:", error);
-        });
-      // Also extract data for UI
+      // Extract data for UI
       processOCR(file);
     }
   }, []);

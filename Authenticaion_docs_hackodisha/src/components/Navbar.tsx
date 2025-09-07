@@ -100,11 +100,6 @@ export function Navbar() {
           label: "Verify Document",
           icon: FileSearch,
         },
-        {
-          href: "/history",
-          label: "History",
-          icon: History,
-        },
       ]
     : [
         { href: "/", label: "Home" },
@@ -126,7 +121,6 @@ export function Navbar() {
             <h1 className="font-display text-xl font-bold text-foreground">
               AuthenTech
             </h1>
-            
           </div>
         </Link>
 
