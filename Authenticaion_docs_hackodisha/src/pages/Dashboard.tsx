@@ -55,19 +55,20 @@ export default function Dashboard() {
 
   const generateExtractedData = async () => {
     if (!uploadedDoc) return;
-    
-    // Simulate OCR processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setExtractedData({
-      name: "RAJESH KUMAR SINGH",
-      rollNumber: "JU20CSE045",
-      course: "Bachelor of Technology",
-      branch: "Computer Science & Engineering",
-      year: "2024",
-      marks: "8.7 CGPA",
-      certificateId: "JU-CSE-2024-045-BTech",
-      institution: "Jharkhand University"
-    });
+    try {
+      const formData = new FormData();
+      formData.append("file", uploadedDoc);
+      const response = await fetch("https://hackodisha-ocr-api.onrender.com/extract/", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) throw new Error("OCR API error");
+      const ocrResult = await response.json();
+      setExtractedData(ocrResult);
+    } catch (error) {
+      console.error("OCR extraction failed:", error);
+      setExtractedData(null);
+    }
   };
   // Send uploaded file to verification API
   const sendFileToVerificationAPI = async () => {

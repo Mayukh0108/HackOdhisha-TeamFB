@@ -181,24 +181,16 @@ export default function Verify() {
 
   const processOCR = async (file: File) => {
     setIsProcessing(true);
-    
     try {
-      // Simulate OCR processing
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      const mockOcrData = {
-        name: "RAJESH KUMAR SINGH",
-        rollNumber: "JU20CSE045",
-        course: "Bachelor of Technology",
-        branch: "Computer Science & Engineering",
-        year: "2024",
-        marks: "8.7 CGPA",
-        certificateId: "JU-CSE-2024-045-BTech",
-        institution: "Jharkhand University",
-        issueDate: "June 15, 2024"
-      };
-      
-      setOcrData(mockOcrData);
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch("https://hackodisha-ocr-api.onrender.com/extract/", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) throw new Error("OCR API error");
+      const ocrResult = await response.json();
+      setOcrData(ocrResult);
       setVerificationStep(2);
       
       // Automatically proceed to verification
