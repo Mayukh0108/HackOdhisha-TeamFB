@@ -8,7 +8,7 @@ dotenv.config();
 
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail', 
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
@@ -16,22 +16,22 @@ const transporter = nodemailer.createTransport({
 });
 
 const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();  
+  return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
 export const registerUser = async (req, res) => {
   try {
     const {
-        firstname,
-        lastname,
-        email,
-        password,
+      firstname,
+      lastname,
+      email,
+      password,
     } = req.body;
 
     if (
       !firstname ||
       !lastname ||
-      !email || 
+      !email ||
       !password
     ) {
       return res.json({ success: false, message: "Please fill in all fields" });
@@ -53,9 +53,9 @@ export const registerUser = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "development",
-      sameSite: "Strict",
-      maxAge: 28 * 24 * 60 * 60 * 1000, 
+      secure: true,
+      sameSite: "None",
+      maxAge: 28 * 24 * 60 * 60 * 1000,
     });
 
     res.json({ success: true, user: { name: user.firstname }, token });
@@ -139,12 +139,12 @@ export const verifyLoginOTP = async (req, res) => {
     }
 
     // Check if OTP exists, matches, and isn't expired
-    if (!user.otp || 
-        user.otp.code !== otp || 
-        new Date() > user.otp.expiresAt) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Invalid or expired OTP" 
+    if (!user.otp ||
+      user.otp.code !== otp ||
+      new Date() > user.otp.expiresAt) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired OTP"
       });
     }
 
@@ -160,9 +160,9 @@ export const verifyLoginOTP = async (req, res) => {
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-      maxAge: 28 * 24 * 60 * 60 * 1000, // 28 days
+      secure: true, 
+      sameSite: "None", 
+      maxAge: 28 * 24 * 60 * 60 * 1000,
     });
 
     res.json({
@@ -252,5 +252,23 @@ export const getUserById = async (req, res) => {
       success: false,
       message: error.message || "Internal server error",
     });
+  }
+};
+
+export const updateUserResults = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, institution } = req.body;
+    if (!name || !institution) {
+      return res.status(400).json({ success: false, message: "Missing fields" });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $push: { lastResults: { name, institution, date: new Date() } } },
+      { new: true }
+    );
+    res.json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };

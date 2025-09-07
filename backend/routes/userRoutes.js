@@ -4,7 +4,8 @@ import {
     verifyLoginOTP,
     getAllUsers,
     getUserById,
-    getUser
+    getUser,
+    updateUserResults
     
 } from "../controllers/userController.js";
 import { userAuth } from "../middlewares/Auth.js";
@@ -17,5 +18,6 @@ router.post("/verify-otp", verifyLoginOTP);
 router.get("/me", userAuth, getUser);
 router.get("/", userAuth, getAllUsers);
 router.get("/:id", userAuth, getUserById);
+router.post("/results", userAuth, updateUserResults);
 
 export default router;

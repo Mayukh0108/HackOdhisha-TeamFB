@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import {
-  FileSearch,
-  History,
-  TrendingUp,
-  AlertTriangle,
+import { 
+  FileSearch, 
+  History, 
+  TrendingUp, 
+  AlertTriangle, 
   CheckCircle,
   Clock,
   Users,
@@ -21,53 +21,30 @@ import {
   Scan
 } from "lucide-react";
 
+// Mock user data - in real app this would come from auth context
+const mockUser = {
+  name: "Dr. Sarah Johnson",
+  role: "verifier" as const
+};
+
+const recentVerifications = [
+  { id: "VER-2024-001", student: "Rajesh Kumar Singh", institution: "Jharkhand University", status: "valid", timestamp: "2 hours ago" },
+  { id: "VER-2024-002", student: "Priya Sharma", institution: "BIT Mesra", status: "review", timestamp: "3 hours ago" },
+  { id: "VER-2024-003", student: "Amit Das", institution: "NIT Jamshedpur", status: "valid", timestamp: "5 hours ago" },
+  { id: "VER-2024-004", student: "Sunita Devi", institution: "Ranchi University", status: "invalid", timestamp: "1 day ago" }
+];
+
+const stats = [
+  { label: "Today's Verifications", value: 24, change: "+12%", icon: FileSearch },
+  { label: "Success Rate", value: 94, suffix: "%", change: "+2%", icon: CheckCircle },
+  { label: "Avg. Processing Time", value: 28, suffix: "s", change: "-15%", icon: Clock },
+  { label: "Flagged Documents", value: 3, change: "-1", icon: AlertTriangle }
+];
+
 export default function Dashboard() {
-  const [user, setUser] = useState(null);
   const [uploadedDoc, setUploadedDoc] = useState<File | null>(null);
   const [extractedData, setExtractedData] = useState<any>(null);
   const [verificationResult, setVerificationResult] = useState<any>(null);
-
-  const API_BASE_URL = "https://hackodhisha-teamfb-backend.onrender.com";
-
-  useEffect(() => {
-    // Fetch user data when component mounts
-    const fetchUser = async () => {
-      try {
-        // Get token from localStorage (where your login stores it)
-        const token = localStorage.getItem("authToken");
-
-        if (!token) {
-          setUser(null);
-          return;
-        }
-
-        const response = await fetch(`${API_BASE_URL}/api/users/me`, {
-          credentials: 'include',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            setUser(data.data);
-          }
-        } else {
-          // If unauthorized, clear the invalid token
-          localStorage.removeItem("authToken");
-          setUser(null);
-        }
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-        localStorage.removeItem("authToken");
-        setUser(null);
-      }
-    };
-
-    fetchUser();
-  }, []);
 
   const handleDocUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -93,7 +70,7 @@ export default function Dashboard() {
       setExtractedData(null);
     }
   };
-
+  // Send uploaded file to verification API
   const sendFileToVerificationAPI = async () => {
     if (!uploadedDoc) return;
     const formData = new FormData();
@@ -112,7 +89,7 @@ export default function Dashboard() {
 
   const verifyDocument = async () => {
     if (!extractedData) return;
-
+    
     // Simulate verification process
     await new Promise(resolve => setTimeout(resolve, 3000));
     setVerificationResult({
@@ -122,48 +99,26 @@ export default function Dashboard() {
     });
   };
 
-  // Mock user data for display while real user data loads
-  const mockUser = {
-    name: user?.name || "Loading...",
-    role: "verifier" as const
-  };
-
-  const recentVerifications = [
-    { id: "VER-2024-001", student: "Rajesh Kumar Singh", institution: "Jharkhand University", status: "valid", timestamp: "2 hours ago" },
-    { id: "VER-2024-002", student: "Priya Sharma", institution: "BIT Mesra", status: "review", timestamp: "3 hours ago" },
-    { id: "VER-2024-003", student: "Amit Das", institution: "NIT Jamshedpur", status: "valid", timestamp: "5 hours ago" },
-    { id: "VER-2024-004", student: "Sunita Devi", institution: "Ranchi University", status: "invalid", timestamp: "1 day ago" }
-  ];
-
-  const stats = [
-    { label: "Today's Verifications", value: 24, change: "+12%", icon: FileSearch },
-    { label: "Success Rate", value: 94, suffix: "%", change: "+2%", icon: CheckCircle },
-    { label: "Avg. Processing Time", value: 28, suffix: "s", change: "-15%", icon: Clock },
-    { label: "Flagged Documents", value: 3, change: "-1", icon: AlertTriangle }
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-card-glass to-primary/5">
       <Navbar />
-
+      
       <div className="container py-8">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Welcome Header */}
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-display font-bold">
-                Welcome back, {user?.name || "User"}
+                Welcome back, {mockUser.name.split(' ')[1]}
               </h1>
               <p className="text-xl text-muted-foreground">
                 Here's your verification activity overview
               </p>
             </div>
-            {user && (
-              <Badge variant="secondary" className="px-4 py-2">
-                <Shield className="h-4 w-4 mr-2" />
-                Verifier
-              </Badge>
-            )}
+            <Badge variant="secondary" className="px-4 py-2">
+              <Shield className="h-4 w-4 mr-2" />
+              {mockUser.role.charAt(0).toUpperCase() + mockUser.role.slice(1)}
+            </Badge>
           </div>
 
           {/* Quick Actions */}
@@ -255,11 +210,11 @@ export default function Dashboard() {
                       <p className="text-sm text-muted-foreground">{verification.institution}</p>
                       <p className="text-xs text-muted-foreground">{verification.timestamp}</p>
                     </div>
-                    <Badge
+                    <Badge 
                       variant={
                         verification.status === 'valid' ? 'default' :
-                          verification.status === 'review' ? 'secondary' :
-                            'destructive'
+                        verification.status === 'review' ? 'secondary' : 
+                        'destructive'
                       }
                     >
                       {verification.status === 'valid' && <CheckCircle className="h-3 w-3 mr-1" />}
