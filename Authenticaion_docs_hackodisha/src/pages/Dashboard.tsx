@@ -18,7 +18,7 @@ import {
   Upload,
   BarChart3,
   Zap,
-  Scan
+  Scan,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -42,10 +42,10 @@ export default function Dashboard() {
         }
 
         const response = await fetch(`${API_BASE_URL}/api/users/me`, {
-          credentials: 'include',
+          credentials: "include",
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
 
@@ -60,7 +60,7 @@ export default function Dashboard() {
           setUser(null);
         }
       } catch (error) {
-        console.error('Failed to fetch user:', error);
+        console.error("Failed to fetch user:", error);
         localStorage.removeItem("authToken");
         setUser(null);
       }
@@ -81,10 +81,13 @@ export default function Dashboard() {
     try {
       const formData = new FormData();
       formData.append("file", uploadedDoc);
-      const response = await fetch("https://hackodisha-ocr-api.onrender.com/extract/", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://hackodisha-ocr-api.onrender.com/extract/",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       if (!response.ok) throw new Error("OCR API error");
       const ocrResult = await response.json();
       setExtractedData(ocrResult);
@@ -99,10 +102,13 @@ export default function Dashboard() {
     const formData = new FormData();
     formData.append("file", uploadedDoc);
     try {
-      const response = await fetch("https://hackodisha-forge-detection-api-1.onrender.com/predict", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://hackodisha-forge-detection-api-1.onrender.com/predict",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       const result = await response.json();
       console.log("Verification API result:", result);
     } catch (error) {
@@ -114,32 +120,73 @@ export default function Dashboard() {
     if (!extractedData) return;
 
     // Simulate verification process
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     setVerificationResult({
       status: "valid",
       confidence: 97,
-      timestamp: new Date().toLocaleString()
+      timestamp: new Date().toLocaleString(),
     });
   };
 
   // Mock user data for display while real user data loads
   const mockUser = {
     name: user?.name || "Loading...",
-    role: "verifier" as const
+    role: "verifier" as const,
   };
 
   const recentVerifications = [
-    { id: "VER-2024-001", student: "Rajesh Kumar Singh", institution: "Jharkhand University", status: "valid", timestamp: "2 hours ago" },
-    { id: "VER-2024-002", student: "Priya Sharma", institution: "BIT Mesra", status: "review", timestamp: "3 hours ago" },
-    { id: "VER-2024-003", student: "Amit Das", institution: "NIT Jamshedpur", status: "valid", timestamp: "5 hours ago" },
-    { id: "VER-2024-004", student: "Sunita Devi", institution: "Ranchi University", status: "invalid", timestamp: "1 day ago" }
+    {
+      id: "VER-2024-001",
+      student: "Rajesh Kumar Singh",
+      institution: "Jharkhand University",
+      status: "valid",
+      timestamp: "2 hours ago",
+    },
+    {
+      id: "VER-2024-002",
+      student: "Priya Sharma",
+      institution: "BIT Mesra",
+      status: "review",
+      timestamp: "3 hours ago",
+    },
+    {
+      id: "VER-2024-003",
+      student: "Amit Das",
+      institution: "NIT Jamshedpur",
+      status: "valid",
+      timestamp: "5 hours ago",
+    },
+    {
+      id: "VER-2024-004",
+      student: "Sunita Devi",
+      institution: "Ranchi University",
+      status: "invalid",
+      timestamp: "1 day ago",
+    },
   ];
 
   const stats = [
-    { label: "Today's Verifications", value: 24, change: "+12%", icon: FileSearch },
-    { label: "Success Rate", value: 94, suffix: "%", change: "+2%", icon: CheckCircle },
-    { label: "Avg. Processing Time", value: 28, suffix: "s", change: "-15%", icon: Clock },
-    { label: "Flagged Documents", value: 3, change: "-1", icon: AlertTriangle }
+    {
+      label: "Today's Verifications",
+      value: 24,
+      change: "+12%",
+      icon: FileSearch,
+    },
+    {
+      label: "Success Rate",
+      value: 94,
+      suffix: "%",
+      change: "+2%",
+      icon: CheckCircle,
+    },
+    {
+      label: "Avg. Processing Time",
+      value: 28,
+      suffix: "s",
+      change: "-15%",
+      icon: Clock,
+    },
+    { label: "Flagged Documents", value: 3, change: "-1", icon: AlertTriangle },
   ];
 
   return (
@@ -158,23 +205,21 @@ export default function Dashboard() {
                 Here's your verification activity overview
               </p>
             </div>
-            {user && (
-              <Badge variant="secondary" className="px-4 py-2">
-                <Shield className="h-4 w-4 mr-2" />
-                Verifier
-              </Badge>
-            )}
           </div>
 
           {/* Quick Actions */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             <Card className="border-primary/20 hover-lift bg-gradient-to-br from-primary/5 to-accent/5">
               <CardContent className="p-6 text-center">
                 <div className="w-16 h-16 rounded-full bg-hero-gradient flex items-center justify-center mx-auto mb-4 shadow-lg">
                   <FileSearch className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="font-display font-semibold text-xl mb-2">New Verification</h3>
-                <p className="text-muted-foreground mb-4">Upload and verify a new certificate</p>
+                <h3 className="font-display font-semibold text-xl mb-2">
+                  New Verification
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Upload and verify a new certificate
+                </p>
                 <Link to="/verify">
                   <Button variant="hero" size="lg" className="w-full shadow-md">
                     Start Verification
@@ -188,55 +233,27 @@ export default function Dashboard() {
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent to-accent-light flex items-center justify-center mx-auto mb-4 shadow-lg">
                   <History className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="font-display font-semibold text-xl mb-2">View History</h3>
-                <p className="text-muted-foreground mb-4">Browse your verification records</p>
+                <h3 className="font-display font-semibold text-xl mb-2">
+                  View History
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Browse your verification records
+                </p>
                 <Link to="/history">
-                  <Button variant="outline" size="lg" className="w-full shadow-md border-accent/20 hover:bg-accent/10">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full shadow-md border-accent/20 hover:bg-accent/10"
+                  >
                     Browse History
                   </Button>
                 </Link>
               </CardContent>
             </Card>
-
-            <Card className="border-primary/20 hover-lift bg-gradient-to-br from-secondary/5 to-primary/5">
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-secondary to-secondary-light flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <BarChart3 className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="font-display font-semibold text-xl mb-2">Analytics</h3>
-                <p className="text-muted-foreground mb-4">View detailed reports and trends</p>
-                <Button variant="outline" size="lg" className="w-full shadow-md border-secondary/20 hover:bg-secondary/10">
-                  View Reports
-                </Button>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Statistics Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <Card key={index} className="border-primary/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <stat.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <Badge variant="outline" className="text-xs text-success">
-                      {stat.change}
-                    </Badge>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-2xl font-bold">
-                      {stat.value}{stat.suffix}
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {stat.label}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
 
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Recent Activity */}
@@ -249,22 +266,37 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {recentVerifications.map((verification) => (
-                  <div key={verification.id} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                  <div
+                    key={verification.id}
+                    className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
+                  >
                     <div className="flex-1">
                       <p className="font-medium">{verification.student}</p>
-                      <p className="text-sm text-muted-foreground">{verification.institution}</p>
-                      <p className="text-xs text-muted-foreground">{verification.timestamp}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {verification.institution}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {verification.timestamp}
+                      </p>
                     </div>
                     <Badge
                       variant={
-                        verification.status === 'valid' ? 'default' :
-                          verification.status === 'review' ? 'secondary' :
-                            'destructive'
+                        verification.status === "valid"
+                          ? "default"
+                          : verification.status === "review"
+                          ? "secondary"
+                          : "destructive"
                       }
                     >
-                      {verification.status === 'valid' && <CheckCircle className="h-3 w-3 mr-1" />}
-                      {verification.status === 'review' && <Clock className="h-3 w-3 mr-1" />}
-                      {verification.status === 'invalid' && <AlertTriangle className="h-3 w-3 mr-1" />}
+                      {verification.status === "valid" && (
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                      )}
+                      {verification.status === "review" && (
+                        <Clock className="h-3 w-3 mr-1" />
+                      )}
+                      {verification.status === "invalid" && (
+                        <AlertTriangle className="h-3 w-3 mr-1" />
+                      )}
                       {verification.status}
                     </Badge>
                   </div>
@@ -288,8 +320,12 @@ export default function Dashboard() {
               <CardContent className="space-y-6">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Processing Speed</span>
-                    <span className="text-sm text-muted-foreground">Excellent</span>
+                    <span className="text-sm font-medium">
+                      Processing Speed
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      Excellent
+                    </span>
                   </div>
                   <Progress value={95} className="h-2" />
                 </div>
@@ -304,7 +340,9 @@ export default function Dashboard() {
 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">System Reliability</span>
+                    <span className="text-sm font-medium">
+                      System Reliability
+                    </span>
                     <span className="text-sm text-muted-foreground">99.9%</span>
                   </div>
                   <Progress value={99.9} className="h-2" />
@@ -319,7 +357,6 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </div>
-
 
           {/* System Status */}
           <Card className="border-primary/20 bg-gradient-to-br from-success/5 to-primary/5">
