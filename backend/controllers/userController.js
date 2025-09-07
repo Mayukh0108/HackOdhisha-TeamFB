@@ -272,3 +272,29 @@ export const updateUserResults = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const fetchResults = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    } 
+    res.json({ success: true, data: user.lastResults });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  } 
+};
+
+export const fetchResultsbyId = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    } 
+    res.json({ success: true, data: user.lastResults });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }   
+};
